@@ -1,0 +1,5 @@
+build
+node_modules
+/index.html
+/src/Example.mad
+.DS_Store
