@@ -2,4 +2,5 @@ build
 node_modules
 /index.html
 /src/Example.mad
+/src/Todo.mad
 .DS_Store

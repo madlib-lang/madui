@@ -4,6 +4,7 @@ import { Wish, fulfill } from "Wish"
 import { init } from "snabbdom/init"
 import { h } from 'snabbdom/h'
 import { attributesModule } from 'snabbdom/modules/attributes'
+import { propsModule } from 'snabbdom/modules/props'
 import { eventListenersModule } from 'snabbdom/modules/eventlisteners'
 
 const AppEnv = {
@@ -14,69 +15,84 @@ const AppEnv = {
 }
 -#
 
-data Element = Element
+type Element = Element
 
-export alias Component a = a -> Element
+export alias View a = a -> Element
 
-data Event = Event
+export type Event
+  = AbstractEvent { eventType :: String }
+  | ClickEvent { eventType :: String }
+  | InputEvent { eventType :: String, target :: { value :: String } }
+
+#-
+const EventConstructors = Object.freeze({
+  mouseout: AbstractEvent,
+  mouseover: AbstractEvent,
+  change: AbstractEvent,
+  click: ClickEvent,
+  input: InputEvent,
+})
+-#
 
 
-data Attribute
+
+export alias Action a = a -> Event -> List (Wish (a -> a) (a -> a))
+
+
+type Attribute
   = AttributeId String
   | AttributeClass String
-  | OnClick (a -> Event -> List (Wish (a -> a) (a -> a)))
-  | OnMouseOver (a -> Event -> List (Wish (a -> a) (a -> a)))
-  | OnMouseOut (a -> Event -> List (Wish (a -> a) (a -> a)))
+  | AttributeValue String
+  | AttributePlaceholder String
+  | AttributeType String
+  | AttributeOnClick (a -> Event -> List (Wish (a -> a) (a -> a)))
+  | AttributeOnMouseOver (a -> Event -> List (Wish (a -> a) (a -> a)))
+  | AttributeOnMouseOut (a -> Event -> List (Wish (a -> a) (a -> a)))
+  | AttributeOnChange (a -> Event -> List (Wish (a -> a) (a -> a)))
+  | AttributeOnInput (a -> Event -> List (Wish (a -> a) (a -> a)))
 
 
 #-
-const getAttributeTuple = attr => {
-  switch(attr.__constructor) {
-    case 'AttributeId':
-      return ["id", attr.__args[0]]
-    case 'AttributeClass':
-      return ["class", attr.__args[0]]
-    case 'OnClick':
-      return ["onClick", attr.__args[0]]
-    case 'OnMouseOver':
-      return ["onMouseOver", attr.__args[0]]
-    case 'OnMouseOut':
-      return ["onMouseOut", attr.__args[0]]
-  }
-}
-
 const getCurrentState = () => AppEnv.currentState
 
-const handleReceived = updater => {
+const runAction = updater => {
   AppEnv.currentState = updater(getCurrentState())
+  console.log(AppEnv.currentState)
   const newElement = AppEnv.rootComponent(AppEnv.currentState)
+  console.log(newElement)
   AppEnv.patch(AppEnv.currentElement, newElement)
   AppEnv.currentElement = newElement
 }
 
-const wrapEventHandler = handler => {
+const wrapEventHandler = (ctor, handler) => {
   return event => {
+    event.eventType = event.type
     // So now calling an event handler gives us a list of wishes
-    const wishes = handler(AppEnv.currentState)(event)
-    wishes.forEach(fulfill(handleReceived)(handleReceived))
+    const wishes = handler(AppEnv.currentState)(ctor(event))
+    wishes.forEach(fulfill(runAction)(runAction))
   }
 }
 
+const getAttributeTuple = attr =>
+  [attr.__constructor.substr(9).toLowerCase(), attr.__args[0]]
+
+const ATTR_NAMES = [
+  "id",
+  "class",
+  "value",
+  "placeholder",
+  "type"
+]
+
 const objectifyAttrs = attrs => attrs.reduce((obj, attr) => {
   const [attrName, attrValue] = getAttributeTuple(attr)
-  let resolvedAttr
-
-  if (attrName === "id" || attrName === "class") {
-    resolvedAttr = { ...obj, attrs: { ...obj.attrs, [attrName]: attrValue }}
-  } else if (attrName === "onClick") {
-    resolvedAttr = { ...obj, on: { ...obj.on, click: wrapEventHandler(attrValue) }}
-  } else if (attrName === "onMouseOver") {
-    resolvedAttr = { ...obj, on: { ...obj.on, mouseover: wrapEventHandler(attrValue) }}
-  } else if (attrName === "onMouseOut") {
-    resolvedAttr = { ...obj, on: { ...obj.on, mouseout: wrapEventHandler(attrValue) }}
+  if (ATTR_NAMES.includes(attrName)) {
+    return { ...obj, props: { ...obj.props, [attrName]: attrValue }}
+  } else if (attrName.substr(0, 2) === "on") {
+    const eventName = attrName.substr(2)
+    const ctor = EventConstructors[eventName]
+    return { ...obj, on: { ...obj.on, [eventName]: wrapEventHandler(ctor, attrValue) }}
   }
-
-  return resolvedAttr
 }, {})
 -#
 
@@ -89,14 +105,33 @@ export id = AttributeId
 className :: String -> Attribute
 export className = AttributeClass
 
+value :: String -> Attribute
+export value = AttributeValue
+
+placeholder :: String -> Attribute
+export placeholder = AttributePlaceholder
+
+inputType :: String -> Attribute
+export inputType = AttributeType
+
+
+
 onClick :: (a -> Event -> List (Wish (a -> a) (a -> a))) -> Attribute
-export onClick = OnClick
+export onClick = AttributeOnClick
 
 onMouseOver :: (a -> Event -> List (Wish (a -> a) (a -> a))) -> Attribute
-export onMouseOver = OnMouseOver
+export onMouseOver = AttributeOnMouseOver
 
 onMouseOut :: (a -> Event -> List (Wish (a -> a) (a -> a))) -> Attribute
-export onMouseOut = OnMouseOut
+export onMouseOut = AttributeOnMouseOut
+
+onChange :: (a -> Event -> List (Wish (a -> a) (a -> a))) -> Attribute
+export onChange = AttributeOnChange
+
+onInput :: (a -> Event -> List (Wish (a -> a) (a -> a))) -> Attribute
+export onInput = AttributeOnInput
+
+
 
 text :: String -> Element
 export text = (content) => #- content -#
@@ -107,8 +142,40 @@ export div = (attrs, children) => #- h("div", objectifyAttrs(attrs), children) -
 span :: List Attribute -> List Element -> Element
 export span = (attrs, children) => #- h("span", objectifyAttrs(attrs), children) -#
 
+
+
+h1 :: List Attribute -> List Element -> Element
+export h1 = (attrs, children) => #- h("h1", objectifyAttrs(attrs), children) -#
+
+h2 :: List Attribute -> List Element -> Element
+export h2 = (attrs, children) => #- h("h2", objectifyAttrs(attrs), children) -#
+
+h3 :: List Attribute -> List Element -> Element
+export h3 = (attrs, children) => #- h("h3", objectifyAttrs(attrs), children) -#
+
+h4 :: List Attribute -> List Element -> Element
+export h4 = (attrs, children) => #- h("h4", objectifyAttrs(attrs), children) -#
+
+h5 :: List Attribute -> List Element -> Element
+export h5 = (attrs, children) => #- h("h5", objectifyAttrs(attrs), children) -#
+
+h6 :: List Attribute -> List Element -> Element
+export h6 = (attrs, children) => #- h("h6", objectifyAttrs(attrs), children) -#
+
 p :: List Attribute -> List Element -> Element
 export p = (attrs, children) => #- h("p", objectifyAttrs(attrs), children) -#
+
+ul :: List Attribute -> List Element -> Element
+export ul = (attrs, children) => #- h("ul", objectifyAttrs(attrs), children) -#
+
+ol :: List Attribute -> List Element -> Element
+export ol = (attrs, children) => #- h("ol", objectifyAttrs(attrs), children) -#
+
+li :: List Attribute -> List Element -> Element
+export li = (attrs, children) => #- h("li", objectifyAttrs(attrs), children) -#
+
+
+
 
 input :: List Attribute -> List Element -> Element
 export input = (attrs, children) => #- h("input", objectifyAttrs(attrs), children) -#
@@ -116,14 +183,20 @@ export input = (attrs, children) => #- h("input", objectifyAttrs(attrs), childre
 button :: List Attribute -> List Element -> Element
 export button = (attrs, children) => #- h("button", objectifyAttrs(attrs), children) -#
 
+form :: List Attribute -> List Element -> Element
+export form = (attrs, children) => #- h("form", objectifyAttrs(attrs), children) -#
+
+
+
+
 /**
  * render - boostraps the app and takes a component, and an initial state as parameters
  */
-render :: Component a -> a -> String -> ()
+render :: View a -> a -> String -> ()
 export render = (component, initialState, containerId) => {
   initialElement = component(initialState)
   #-
-  const patch = init([attributesModule, eventListenersModule])
+  const patch = init([attributesModule, propsModule, eventListenersModule])
   patch(document.getElementById(containerId), initialElement)
 
   AppEnv.patch = patch
