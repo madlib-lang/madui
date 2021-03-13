@@ -1,4 +1,6 @@
 import { Wish, fulfill } from "Wish"
+import { fromList, get } from "Dictionary"
+import { fromMaybe } from "Maybe"
 
 #-
 import { init } from "snabbdom/init"
@@ -11,7 +13,7 @@ const AppEnv = {
   patch: null,
   currentElement: null,
   currentState: null,
-  rootComponent: null,
+  rootView: null,
 }
 -#
 
@@ -19,18 +21,40 @@ type Element = Element
 
 export alias View a = a -> Element
 
+// https://keycode.info/
+export type Key
+  = KEY_ENTER
+  | KEY_BACKSPACE
+  | KEY_ANY
+
+KEY_CODE_MAPPINGS = fromList([
+  <13, KEY_ENTER>,
+  <8, KEY_BACKSPACE>,
+])
+
+getKeyFromCode :: Number -> Key
+getKeyFromCode = (keyCode) => fromMaybe(KEY_ANY, get(keyCode, KEY_CODE_MAPPINGS))
+
 export type Event
   = AbstractEvent { eventType :: String }
   | ClickEvent { eventType :: String }
   | InputEvent { eventType :: String, target :: { value :: String } }
+  | KeyPressEvent { eventType :: String, key :: Key }
 
 #-
+const buildKeyPressEvent = event => {
+  const key = getKeyFromCode(event.keyCode, KEY_CODE_MAPPINGS)
+
+  return KeyPressEvent({ ...event, key })
+}
+
 const EventConstructors = Object.freeze({
   mouseout: AbstractEvent,
   mouseover: AbstractEvent,
   change: AbstractEvent,
   click: ClickEvent,
   input: InputEvent,
+  keypress: buildKeyPressEvent
 })
 -#
 
@@ -45,11 +69,13 @@ type Attribute
   | AttributeValue String
   | AttributePlaceholder String
   | AttributeType String
-  | AttributeOnClick (a -> Event -> List (Wish (a -> a) (a -> a)))
-  | AttributeOnMouseOver (a -> Event -> List (Wish (a -> a) (a -> a)))
-  | AttributeOnMouseOut (a -> Event -> List (Wish (a -> a) (a -> a)))
-  | AttributeOnChange (a -> Event -> List (Wish (a -> a) (a -> a)))
-  | AttributeOnInput (a -> Event -> List (Wish (a -> a) (a -> a)))
+  | AttributeKey String
+  | AttributeOnClick (Action a)
+  | AttributeOnMouseOver (Action a)
+  | AttributeOnMouseOut (Action a)
+  | AttributeOnChange (Action a)
+  | AttributeOnInput (Action a)
+  | AttributeOnKeyPress (Action a)
 
 
 #-
@@ -57,9 +83,7 @@ const getCurrentState = () => AppEnv.currentState
 
 const runAction = updater => {
   AppEnv.currentState = updater(getCurrentState())
-  console.log(AppEnv.currentState)
-  const newElement = AppEnv.rootComponent(AppEnv.currentState)
-  console.log(newElement)
+  const newElement = AppEnv.rootView(AppEnv.currentState)
   AppEnv.patch(AppEnv.currentElement, newElement)
   AppEnv.currentElement = newElement
 }
@@ -79,14 +103,20 @@ const getAttributeTuple = attr =>
 const ATTR_NAMES = [
   "id",
   "class",
-  "value",
   "placeholder",
   "type"
+]
+const PROP_NAMES = [
+  "value"
 ]
 
 const objectifyAttrs = attrs => attrs.reduce((obj, attr) => {
   const [attrName, attrValue] = getAttributeTuple(attr)
-  if (ATTR_NAMES.includes(attrName)) {
+  if (attrName === "key") {
+    return { ...obj, key: attrValue }
+  } else if (ATTR_NAMES.includes(attrName)) {
+    return { ...obj, attrs: { ...obj.attrs, [attrName]: attrValue }}
+  } else if (PROP_NAMES.includes(attrName)) {
     return { ...obj, props: { ...obj.props, [attrName]: attrValue }}
   } else if (attrName.substr(0, 2) === "on") {
     const eventName = attrName.substr(2)
@@ -105,6 +135,9 @@ export id = AttributeId
 className :: String -> Attribute
 export className = AttributeClass
 
+key :: String -> Attribute
+export key = AttributeKey
+
 value :: String -> Attribute
 export value = AttributeValue
 
@@ -116,20 +149,23 @@ export inputType = AttributeType
 
 
 
-onClick :: (a -> Event -> List (Wish (a -> a) (a -> a))) -> Attribute
+onClick :: (Action a) -> Attribute
 export onClick = AttributeOnClick
 
-onMouseOver :: (a -> Event -> List (Wish (a -> a) (a -> a))) -> Attribute
+onMouseOver :: (Action a) -> Attribute
 export onMouseOver = AttributeOnMouseOver
 
-onMouseOut :: (a -> Event -> List (Wish (a -> a) (a -> a))) -> Attribute
+onMouseOut :: (Action a) -> Attribute
 export onMouseOut = AttributeOnMouseOut
 
-onChange :: (a -> Event -> List (Wish (a -> a) (a -> a))) -> Attribute
+onChange :: (Action a) -> Attribute
 export onChange = AttributeOnChange
 
-onInput :: (a -> Event -> List (Wish (a -> a) (a -> a))) -> Attribute
+onInput :: (Action a) -> Attribute
 export onInput = AttributeOnInput
+
+onKeyPress :: Action a -> Attribute
+export onKeyPress = AttributeOnKeyPress
 
 
 
@@ -175,6 +211,21 @@ li :: List Attribute -> List Element -> Element
 export li = (attrs, children) => #- h("li", objectifyAttrs(attrs), children) -#
 
 
+header :: List Attribute -> List Element -> Element
+export header = (attrs, children) => #- h("header", objectifyAttrs(attrs), children) -#
+
+main :: List Attribute -> List Element -> Element
+export main = (attrs, children) => #- h("main", objectifyAttrs(attrs), children) -#
+
+section :: List Attribute -> List Element -> Element
+export section = (attrs, children) => #- h("section", objectifyAttrs(attrs), children) -#
+
+aside :: List Attribute -> List Element -> Element
+export aside = (attrs, children) => #- h("aside", objectifyAttrs(attrs), children) -#
+
+empty :: List Attribute -> List Element -> Element
+export empty = (attrs, children) => #- null -#
+
 
 
 input :: List Attribute -> List Element -> Element
@@ -193,15 +244,15 @@ export form = (attrs, children) => #- h("form", objectifyAttrs(attrs), children)
  * render - boostraps the app and takes a component, and an initial state as parameters
  */
 render :: View a -> a -> String -> ()
-export render = (component, initialState, containerId) => {
-  initialElement = component(initialState)
+export render = (view, initialState, containerId) => {
+  initialElement = view(initialState)
   #-
   const patch = init([attributesModule, propsModule, eventListenersModule])
   patch(document.getElementById(containerId), initialElement)
 
   AppEnv.patch = patch
   AppEnv.currentElement = initialElement
-  AppEnv.rootComponent = component
+  AppEnv.rootView = view
   AppEnv.currentState = initialState
   -#
 
