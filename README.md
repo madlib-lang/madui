@@ -1,14 +1,62 @@
 # MadUI
-## Getting started
-You just created a new madlib project, if it's your first project you should read the following.
-### Notes on Madlib
-Madlib is a general purpose programming language that compiles to Javascript. It means that you need to have [Nodejs](https://nodejs.org/) installed and configured in order to make it work. Madlib can target nodejs or browser, by default it will compile for nodejs.
-### How to run it
-First, you need to compile the program:
-```shell
-madlib compile -i src/Main.mad
+MadUI is a client library to build web applications.
+
+## How to install it
+- Add the repository's zip to your madlib.json
+- Run `madlib install` to locally install it
+
+## How to use it
+
+### View
+There's no real concept of components in MadUI. Instead you have one main render function that
+you can compose and is a function of the State. The state can be any user-defined madlib type
+such as `String`, `Number`, a tuple, or any data type, alias or record you need to model the
+state of your app. To render your view you simply call `render` that has the following signature:
+```madlib
+render :: View state -> state -> String -> ()
 ```
-Then, you can run it like this:
-```shell
-node build/Main.mjs
+So understand, it takes a view function ( State -> Element ) that you define, an initial state, and
+the id of the element it should render into in your html document.
+
+### Elements
+This package exports render functions that follow the html tags such as:
+- div
+- span
+- p
+- h1...6
+And more.
+These functions all have the same signature:
+
+```madlib
+List Attribute -> List Element -> Element
+```
+
+### Attributes
+An attribute is mainly created through exported functions such as:
+- `id :: String -> Attribute`
+- `className :: String -> Attribute`
+- `onClick :: (Action a) -> Attribute`
+
+### Event handlers
+In the case of event handlers, an action is defined like this:
+```madlib
+export alias Action state = state -> Event -> List (Wish (state -> state) (state -> state))
+```
+
+An action is a function of the State. A lot happens here but the gist is that you receive as parameters
+the current state at the time the event was emitted as well as the event object. You must then return a `List`
+of `Wish` that must contain a function `(state -> state)`. This function ( for bad or good handlers ) will be
+run, whenever your computation finishes. So you could do an http call and when that http call returns you would map
+the result to that function so that it runs with the latest state ( or current ) by the time the async computation
+is finished. A quick example:
+
+```madlib
+handleClick :: Action MyState
+handleClick = (state, event) => pipe(
+  getUserId, // retrieves the user id from the state
+  buildUserProfileUrl, // generates a URL to fetch a user profile
+  Http.get, // fetch the data
+  chain((profile) => ((state) => ({ ...state, profile: profile })),
+  List.singleton // remember, it must return a list, because you may well want to generate other side effects based on that event
+)(state)
 ```
