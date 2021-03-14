@@ -60,3 +60,6 @@ handleClick = (state, event) => pipe(
   List.singleton // remember, it must return a list, because you may well want to generate other side effects based on that event
 )(state)
 ```
+
+### Examples
+You can find full examples in this repository: [https://github.com/madlib-lang/madui-examples](https://github.com/madlib-lang/madui-examples)
