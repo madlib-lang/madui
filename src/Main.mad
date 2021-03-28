@@ -14,6 +14,7 @@ const AppEnv = {
   currentElement: null,
   currentState: null,
   rootView: null,
+  onUrlChangedAction: null,
 }
 -#
 
@@ -40,6 +41,7 @@ export type Event
   | ClickEvent { eventType :: String }
   | InputEvent { eventType :: String, target :: { value :: String } }
   | KeyPressEvent { eventType :: String, key :: Key }
+  | UrlEvent { url :: String }
 
 #-
 const buildKeyPressEvent = event => {
@@ -70,6 +72,7 @@ type Attribute
   | AttributePlaceholder String
   | AttributeType String
   | AttributeKey String
+  | AttributeTo String
   | AttributeOnClick (Action a)
   | AttributeOnMouseOver (Action a)
   | AttributeOnMouseOut (Action a)
@@ -122,6 +125,8 @@ const objectifyAttrs = attrs => attrs.reduce((obj, attr) => {
     const eventName = attrName.substr(2)
     const ctor = EventConstructors[eventName]
     return { ...obj, on: { ...obj.on, [eventName]: wrapEventHandler(ctor, attrValue) }}
+  } else {
+    return { ...obj, [attrName]: attrValue };
   }
 }, {})
 -#
@@ -146,6 +151,9 @@ export placeholder = AttributePlaceholder
 
 inputType :: String -> Attribute
 export inputType = AttributeType
+
+to :: String -> Attribute
+export to = AttributeTo
 
 
 
@@ -238,6 +246,46 @@ form :: List Attribute -> List Element -> Element
 export form = (attrs, children) => #- h("form", objectifyAttrs(attrs), children) -#
 
 
+link :: List Attribute -> List Element -> Element
+export link = (attrs, children) => #-{
+  const objAttrs = objectifyAttrs(attrs);
+  const clickHandler = (event) => {
+    event.preventDefault();
+
+    if (objAttrs.to) {
+      const builtUrl = document.location.origin + document.location.pathname + '\#' + objAttrs.to
+
+      history.pushState({}, '', builtUrl);
+
+      if (AppEnv.onUrlChangedAction) {
+        const wishes = AppEnv.onUrlChangedAction(getCurrentState())(UrlEvent({ url: objAttrs.to }))
+        wishes.forEach(fulfill(runAction)(runAction))
+      }
+    }
+  }
+
+  return h("a", { ...objAttrs, on: { click: clickHandler }}, children);
+}-#
+
+
+onUrlChanged :: Action a -> ()
+export onUrlChanged = (action) => #-{
+  AppEnv.onUrlChangedAction = action
+
+  window.onpopstate = function(event) {
+    const path = document.location.hash.substr(1) || "/";
+    const wishes = AppEnv.onUrlChangedAction(getCurrentState())(UrlEvent({ url: path }))
+    wishes.forEach(fulfill(runAction)(runAction))
+    console.log(document.location);
+    // alert(`location: ${document.location}, state: ${JSON.stringify(event.state)}`)
+  }
+}-#
+
+
+syncAction :: (a -> Event -> a) -> Action a
+export syncAction = (stateUpdate) => (
+  (state, event) => [of((_) => stateUpdate(state, event))]
+)
 
 
 /**
