@@ -18,7 +18,7 @@ const AppEnv = {
 }
 -#
 
-type Element = Element
+export type Element = Element
 
 export alias View a = a -> Element
 
