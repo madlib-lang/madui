@@ -14,8 +14,5 @@
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^11.2.0",
     "rollup": "^2.39.1"
-  },
-  "peerDependencies": {
-    "@madlib-lang/madlib": "^0.7.0"
   }
 }
