@@ -72,6 +72,10 @@ type Attribute
   | AttributePlaceholder String
   | AttributeType String
   | AttributeKey String
+  | AttributeHref String
+  | AttributeSrc String
+  | AttributeTitle String
+  | AttributeAlt String
   | AttributeTo String
   | AttributeOnClick (Action a)
   | AttributeOnMouseOver (Action a)
@@ -107,7 +111,11 @@ const ATTR_NAMES = [
   "id",
   "class",
   "placeholder",
-  "type"
+  "type",
+  "href",
+  "src",
+  "alt",
+  "title"
 ]
 const PROP_NAMES = [
   "value"
@@ -155,6 +163,18 @@ export inputType = AttributeType
 to :: String -> Attribute
 export to = AttributeTo
 
+href :: String -> Attribute
+export href = AttributeHref
+
+src :: String -> Attribute
+export src = AttributeSrc
+
+title :: String -> Attribute
+export title = AttributeTitle
+
+alt :: String -> Attribute
+export alt = AttributeAlt
+
 
 
 onClick :: (Action a) -> Attribute
@@ -186,6 +206,14 @@ export div = (attrs, children) => #- h("div", objectifyAttrs(attrs), children) -
 span :: List Attribute -> List Element -> Element
 export span = (attrs, children) => #- h("span", objectifyAttrs(attrs), children) -#
 
+strong :: List Attribute -> List Element -> Element
+export strong = (attrs, children) => #- h("strong", objectifyAttrs(attrs), children) -#
+
+i :: List Attribute -> List Element -> Element
+export i = (attrs, children) => #- h("i", objectifyAttrs(attrs), children) -#
+
+br :: List Attribute -> List Element -> Element
+export br = (attrs, children) => #- h("br", objectifyAttrs(attrs), children) -#
 
 
 h1 :: List Attribute -> List Element -> Element
@@ -208,6 +236,12 @@ export h6 = (attrs, children) => #- h("h6", objectifyAttrs(attrs), children) -#
 
 p :: List Attribute -> List Element -> Element
 export p = (attrs, children) => #- h("p", objectifyAttrs(attrs), children) -#
+
+blockquote :: List Attribute -> List Element -> Element
+export blockquote = (attrs, children) => #- h("blockquote", objectifyAttrs(attrs), children) -#
+
+code :: List Attribute -> List Element -> Element
+export code = (attrs, children) => #- h("code", objectifyAttrs(attrs), children) -#
 
 ul :: List Attribute -> List Element -> Element
 export ul = (attrs, children) => #- h("ul", objectifyAttrs(attrs), children) -#
@@ -245,6 +279,11 @@ export button = (attrs, children) => #- h("button", objectifyAttrs(attrs), child
 form :: List Attribute -> List Element -> Element
 export form = (attrs, children) => #- h("form", objectifyAttrs(attrs), children) -#
 
+img :: List Attribute -> List Element -> Element
+export img = (attrs, children) => #- h("img", objectifyAttrs(attrs), children) -#
+
+a :: List Attribute -> List Element -> Element
+export a = (attrs, children) => #- h("a", objectifyAttrs(attrs), children) -#
 
 link :: List Attribute -> List Element -> Element
 export link = (attrs, children) => #-{
