@@ -265,6 +265,10 @@ export section = (attrs, children) => #- h("section", objectifyAttrs(attrs), chi
 aside :: List Attribute -> List Element -> Element
 export aside = (attrs, children) => #- h("aside", objectifyAttrs(attrs), children) -#
 
+footer :: List Attribute -> List Element -> Element
+export footer = (attrs, children) => #- h("footer", objectifyAttrs(attrs), children) -#
+
+
 empty :: List Attribute -> List Element -> Element
 export empty = (attrs, children) => #- null -#
 
