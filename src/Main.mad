@@ -63,6 +63,7 @@ const EventConstructors = Object.freeze({
 
 
 export alias Action a = a -> Event -> List (Wish (a -> a) (a -> a))
+export alias Subscription a = ((a -> a) -> ()) -> ()
 
 
 type Attribute
@@ -346,6 +347,15 @@ export render = (view, initialState, containerId) => {
   AppEnv.rootView = view
   AppEnv.currentState = initialState
   -#
+
+  return ()
+}
+
+renderWithSubscriptions :: View a -> a -> List (Subscription a) -> String -> ()
+export renderWithSubscriptions = (view, initialState, subscriptions, containerId) => {
+  render(view, initialState, containerId)
+
+  #- subscriptions.forEach(sub => sub(runAction)) -#
 
   return ()
 }
