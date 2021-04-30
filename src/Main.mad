@@ -56,7 +56,8 @@ const EventConstructors = Object.freeze({
   change: AbstractEvent,
   click: ClickEvent,
   input: InputEvent,
-  keypress: buildKeyPressEvent
+  keypress: buildKeyPressEvent,
+  transitionend: AbstractEvent
 })
 -#
 
@@ -84,6 +85,7 @@ type Attribute
   | AttributeOnChange (Action a)
   | AttributeOnInput (Action a)
   | AttributeOnKeyPress (Action a)
+  | AttributeOnTransitionEnd (Action a)
 
 
 #-
@@ -195,6 +197,9 @@ export onInput = AttributeOnInput
 
 onKeyPress :: Action a -> Attribute
 export onKeyPress = AttributeOnKeyPress
+
+onTransitionEnd :: Action a -> Attribute
+export onTransitionEnd = AttributeOnTransitionEnd
 
 
 
