@@ -178,8 +178,6 @@ export title = AttributeTitle
 alt :: String -> Attribute
 export alt = AttributeAlt
 
-
-
 onClick :: (Action a) -> Attribute
 export onClick = AttributeOnClick
 
@@ -201,99 +199,72 @@ export onKeyPress = AttributeOnKeyPress
 onTransitionEnd :: Action a -> Attribute
 export onTransitionEnd = AttributeOnTransitionEnd
 
-
-
 text :: String -> Element
 export text = (content) => #- content -#
 
-div :: List Attribute -> List Element -> Element
-export div = (attrs, children) => #- h("div", objectifyAttrs(attrs), children) -#
+tag :: String -> List Attribute -> List Element -> Element
+export tag = (tagName, attrs, children) => #- h(tagName, objectifyAttrs(attrs), children) -#
 
-span :: List Attribute -> List Element -> Element
-export span = (attrs, children) => #- h("span", objectifyAttrs(attrs), children) -#
+// TAGS - start
 
-strong :: List Attribute -> List Element -> Element
-export strong = (attrs, children) => #- h("strong", objectifyAttrs(attrs), children) -#
+export div = tag("div")
 
-i :: List Attribute -> List Element -> Element
-export i = (attrs, children) => #- h("i", objectifyAttrs(attrs), children) -#
+export span = tag("span")
 
-br :: List Attribute -> List Element -> Element
-export br = (attrs, children) => #- h("br", objectifyAttrs(attrs), children) -#
+export strong = tag("strong")
 
+export i = tag("em")
 
-h1 :: List Attribute -> List Element -> Element
-export h1 = (attrs, children) => #- h("h1", objectifyAttrs(attrs), children) -#
+export br = tag("br")
 
-h2 :: List Attribute -> List Element -> Element
-export h2 = (attrs, children) => #- h("h2", objectifyAttrs(attrs), children) -#
+export h1 = tag("h1")
 
-h3 :: List Attribute -> List Element -> Element
-export h3 = (attrs, children) => #- h("h3", objectifyAttrs(attrs), children) -#
+export h2 = tag("h2")
 
-h4 :: List Attribute -> List Element -> Element
-export h4 = (attrs, children) => #- h("h4", objectifyAttrs(attrs), children) -#
+export h3 = tag("h3")
 
-h5 :: List Attribute -> List Element -> Element
-export h5 = (attrs, children) => #- h("h5", objectifyAttrs(attrs), children) -#
+export h4 = tag("h4")
 
-h6 :: List Attribute -> List Element -> Element
-export h6 = (attrs, children) => #- h("h6", objectifyAttrs(attrs), children) -#
+export h5 = tag("h5")
 
-p :: List Attribute -> List Element -> Element
-export p = (attrs, children) => #- h("p", objectifyAttrs(attrs), children) -#
+export h6 = tag("h6")
 
-blockquote :: List Attribute -> List Element -> Element
-export blockquote = (attrs, children) => #- h("blockquote", objectifyAttrs(attrs), children) -#
+export p = tag("p")
 
-code :: List Attribute -> List Element -> Element
-export code = (attrs, children) => #- h("code", objectifyAttrs(attrs), children) -#
+export blockquote = tag("blockquote")
 
-ul :: List Attribute -> List Element -> Element
-export ul = (attrs, children) => #- h("ul", objectifyAttrs(attrs), children) -#
+export code = tag("code")
 
-ol :: List Attribute -> List Element -> Element
-export ol = (attrs, children) => #- h("ol", objectifyAttrs(attrs), children) -#
+export ul = tag("ul")
 
-li :: List Attribute -> List Element -> Element
-export li = (attrs, children) => #- h("li", objectifyAttrs(attrs), children) -#
+export ol = tag("ol")
 
+export li = tag("li")
 
-header :: List Attribute -> List Element -> Element
-export header = (attrs, children) => #- h("header", objectifyAttrs(attrs), children) -#
+export header = tag("header")
 
-main :: List Attribute -> List Element -> Element
-export main = (attrs, children) => #- h("main", objectifyAttrs(attrs), children) -#
+export main = tag("main")
 
-section :: List Attribute -> List Element -> Element
-export section = (attrs, children) => #- h("section", objectifyAttrs(attrs), children) -#
+export section = tag("section")
 
-aside :: List Attribute -> List Element -> Element
-export aside = (attrs, children) => #- h("aside", objectifyAttrs(attrs), children) -#
+export aside = tag("aside")
 
-footer :: List Attribute -> List Element -> Element
-export footer = (attrs, children) => #- h("footer", objectifyAttrs(attrs), children) -#
+export footer = tag("footer")
 
+export input = tag("input")
+
+export button = tag("button")
+
+export form = tag("form")
+
+export img = tag("img")
+
+export a = tag("a")
+
+// TAGS - end
 
 empty :: List Attribute -> List Element -> Element
 export empty = (attrs, children) => #- null -#
-
-
-
-input :: List Attribute -> List Element -> Element
-export input = (attrs, children) => #- h("input", objectifyAttrs(attrs), children) -#
-
-button :: List Attribute -> List Element -> Element
-export button = (attrs, children) => #- h("button", objectifyAttrs(attrs), children) -#
-
-form :: List Attribute -> List Element -> Element
-export form = (attrs, children) => #- h("form", objectifyAttrs(attrs), children) -#
-
-img :: List Attribute -> List Element -> Element
-export img = (attrs, children) => #- h("img", objectifyAttrs(attrs), children) -#
-
-a :: List Attribute -> List Element -> Element
-export a = (attrs, children) => #- h("a", objectifyAttrs(attrs), children) -#
 
 link :: List Attribute -> List Element -> Element
 export link = (attrs, children) => #-{
