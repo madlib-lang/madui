@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "snabbdom": "^2.1.0"
+    "snabbdom": "^3.0.1"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^11.2.0",

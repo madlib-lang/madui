@@ -3,11 +3,7 @@ import { fromList, get } from "Dictionary"
 import { fromMaybe } from "Maybe"
 
 #-
-import { init } from "snabbdom/init"
-import { h } from 'snabbdom/h'
-import { attributesModule } from 'snabbdom/modules/attributes'
-import { propsModule } from 'snabbdom/modules/props'
-import { eventListenersModule } from 'snabbdom/modules/eventlisteners'
+import { attributesModule, h, init, propsModule, eventListenersModule } from "snabbdom"
 
 const AppEnv = {
   patch: null,
@@ -67,7 +63,7 @@ export alias Action a = a -> Event -> List (Wish (a -> a) (a -> a))
 export alias Subscription a = ((a -> a) -> ()) -> ()
 
 
-type Attribute
+export type Attribute
   = AttributeId String
   | AttributeClass String
   | AttributeValue String
@@ -300,6 +296,9 @@ export onUrlChanged = (action) => #-{
     // alert(`location: ${document.location}, state: ${JSON.stringify(event.state)}`)
   }
 }-#
+
+getUrl :: () -> String
+export getUrl = (_) => #- document.location.hash.substr(1) || "/" -#
 
 
 syncAction :: (a -> Event -> a) -> Action a
