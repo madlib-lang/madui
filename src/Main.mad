@@ -292,8 +292,6 @@ export onUrlChanged = (action) => #-{
     const path = document.location.hash.substr(1) || "/";
     const wishes = AppEnv.onUrlChangedAction(getCurrentState())(UrlEvent({ url: path }))
     wishes.forEach(fulfill(runAction)(runAction))
-    console.log(document.location);
-    // alert(`location: ${document.location}, state: ${JSON.stringify(event.state)}`)
   }
 }-#
 
