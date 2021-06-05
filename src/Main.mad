@@ -1,4 +1,4 @@
-import type { Wish } from "Wish"
+import { Wish } from "Wish"
 import { fulfill } from "Wish"
 import { fromList, get } from "Dictionary"
 import { fromMaybe } from "Maybe"
