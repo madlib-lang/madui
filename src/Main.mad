@@ -34,11 +34,11 @@ getKeyFromCode :: Number -> Key
 getKeyFromCode = (keyCode) => fromMaybe(KEY_ANY, get(keyCode, KEY_CODE_MAPPINGS))
 
 export type Event
-  = AbstractEvent { eventType :: String }
-  | ClickEvent { eventType :: String }
-  | InputEvent { eventType :: String, target :: { value :: String } }
-  | KeyPressEvent { eventType :: String, key :: Key }
-  | UrlEvent { url :: String }
+  = AbstractEvent({ eventType :: String })
+  | ClickEvent({ eventType :: String })
+  | InputEvent({ eventType :: String, target :: { value :: String } })
+  | KeyPressEvent({ eventType :: String, key :: Key })
+  | UrlEvent({ url :: String })
 
 #-
 const buildKeyPressEvent = event => {
@@ -65,24 +65,24 @@ export alias Subscription a = ((a -> a) -> ()) -> ()
 
 
 export type Attribute
-  = AttributeId String
-  | AttributeClass String
-  | AttributeValue String
-  | AttributePlaceholder String
-  | AttributeType String
-  | AttributeKey String
-  | AttributeHref String
-  | AttributeSrc String
-  | AttributeTitle String
-  | AttributeAlt String
-  | AttributeTo String
-  | AttributeOnClick (Action a)
-  | AttributeOnMouseOver (Action a)
-  | AttributeOnMouseOut (Action a)
-  | AttributeOnChange (Action a)
-  | AttributeOnInput (Action a)
-  | AttributeOnKeyPress (Action a)
-  | AttributeOnTransitionEnd (Action a)
+  = AttributeId(String)
+  | AttributeClass(String)
+  | AttributeValue(String)
+  | AttributePlaceholder(String)
+  | AttributeType(String)
+  | AttributeKey(String)
+  | AttributeHref(String)
+  | AttributeSrc(String)
+  | AttributeTitle(String)
+  | AttributeAlt(String)
+  | AttributeTo(String)
+  | AttributeOnClick(Action a)
+  | AttributeOnMouseOver(Action a)
+  | AttributeOnMouseOut(Action a)
+  | AttributeOnChange(Action a)
+  | AttributeOnInput(Action a)
+  | AttributeOnKeyPress(Action a)
+  | AttributeOnTransitionEnd(Action a)
 
 
 #-
