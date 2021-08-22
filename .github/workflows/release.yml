@@ -54,7 +54,7 @@ jobs:
 
       - name: "Delete created tag from changelog"
         run: |
-          git push --delete origin :refs/tags/v${{ steps.changelog.outputs.version }}
+          git push origin :refs/tags/v${{ steps.changelog.outputs.version }}
           git tag -d v${{ steps.changelog.outputs.version }}
 
       - name: "Create Release"
