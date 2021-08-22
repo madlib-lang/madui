@@ -204,59 +204,50 @@ export tag = (tagName, attrs, children) => #- h(tagName, objectifyAttrs(attrs), 
 
 // TAGS - start
 
-export div = tag("div")
-
-export span = tag("span")
-
-export strong = tag("strong")
-
-export i = tag("em")
-
-export br = tag("br")
-
-export h1 = tag("h1")
-
-export h2 = tag("h2")
-
-export h3 = tag("h3")
-
-export h4 = tag("h4")
-
-export h5 = tag("h5")
-
-export h6 = tag("h6")
-
-export p = tag("p")
-
-export blockquote = tag("blockquote")
-
-export code = tag("code")
-
-export ul = tag("ul")
-
-export ol = tag("ol")
-
-export li = tag("li")
-
-export header = tag("header")
-
-export main = tag("main")
-
-export section = tag("section")
-
-export aside = tag("aside")
-
-export footer = tag("footer")
-
-export input = tag("input")
-
-export button = tag("button")
-
-export form = tag("form")
-
-export img = tag("img")
-
 export a = tag("a")
+export article = tag("article")
+export aside = tag("aside")
+export audio = tag("audio")
+export blockquote = tag("blockquote")
+export br = tag("br")
+export button = tag("button")
+export canvas = tag("canvas")
+export code = tag("code")
+export datalist = tag("datalist")
+export details = tag("details")
+export div = tag("div")
+export embed = tag("embed")
+export figure = tag("figure")
+export footer = tag("footer")
+export form = tag("form")
+export h1 = tag("h1")
+export h2 = tag("h2")
+export h3 = tag("h3")
+export h4 = tag("h4")
+export h5 = tag("h5")
+export h6 = tag("h6")
+export header = tag("header")
+export hgroup = tag("hgroup")
+export i = tag("em")
+export img = tag("img")
+export input = tag("input")
+export li = tag("li")
+export main = tag("main")
+export mark = tag("mark")
+export nav = tag("nav")
+export ol = tag("ol")
+export option = tag("option")
+export output = tag("output")
+export p = tag("p")
+export progress = tag("progress")
+export ruby = tag("ruby")
+export section = tag("section")
+export span = tag("span")
+export strong = tag("strong")
+export time = tag("time")
+export ul = tag("ul")
+export video = tag("video")
+export wbr = tag("wbr")
 
 // TAGS - end
 
