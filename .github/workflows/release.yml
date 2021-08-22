@@ -52,6 +52,12 @@ jobs:
           skip-commit: true
           skip-version-file: true
 
+      - name: "Delete created tag from changelog"
+        if: ${{ steps.changelog.outputs.skipped == 'false' }}
+        run: |
+          git push --delete origin v${{ steps.changelog.outputs.version }}
+          git tag -d v${{ steps.changelog.outputs.version }}
+
       - name: "Create Release"
         id: create_release
         uses: actions/create-release@v1.1.4
