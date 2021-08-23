@@ -1,6 +1,6 @@
 {
-  "buildHash": "bed59b20d45de46afcb0b9e5e5506c2d",
-  "versionHash": "e5d18b4e2c1dc1975775ee385ab41c85",
+  "buildHash": "c28629eb936dedd603dc6efddcbe27d3",
+  "versionHash": "47cd76e43f74bbc2e1baaf194d07e1fa",
   "api": {
     "apiNames": {
       "ruby": "List Attribute -> List Element -> Element",
@@ -77,7 +77,6 @@
     },
     "apiInstances": [],
     "apiAliases": {
-      "View a": "(a -> Element)",
       "Action a": "(a -> Event -> List (Wish (a -> a) (a -> a)))",
       "Subscription a": "((a -> a -> ()) -> ())"
     },

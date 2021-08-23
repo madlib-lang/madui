@@ -17,8 +17,6 @@ const AppEnv = {
 
 export type Element = Element
 
-export alias View a = a -> Element
-
 // https://keycode.info/
 export type Key
   = KEY_ENTER
@@ -261,25 +259,10 @@ export link = (attrs, children) => #-{
     if (!objAttrs.attrs) {
       objAttrs.attrs = {}
     }
-    objAttrs.attrs.href = `/\#${objAttrs.to}`
+    objAttrs.attrs.href = `\#${objAttrs.to}`
   }
-  // const clickHandler = (event) => {
-  //   // event.preventDefault();
-
-  //   if (objAttrs.to) {
-  //     const builtUrl = document.location.origin + document.location.pathname + '\#' + objAttrs.to
-
-  //     history.pushState({}, '', builtUrl);
-
-  //     if (AppEnv.onUrlChangedAction) {
-  //       const wishes = AppEnv.onUrlChangedAction(getCurrentState())(UrlEvent({ url: objAttrs.to }))
-  //       wishes.forEach(fulfill(runAction)(runAction))
-  //     }
-  //   }
-  // }
 
   return h("a", { ...objAttrs }, children);
-  // return h("a", { ...objAttrs, on: { ...objAttrs.on, click: clickHandler }}, children);
 }-#
 
 
@@ -307,7 +290,7 @@ export syncAction = (stateUpdate) => (
 /**
  * render - boostraps the app and takes a component, and an initial state as parameters
  */
-render :: View a -> a -> String -> ()
+render :: (a -> Element) -> a -> String -> ()
 export render = (view, initialState, containerId) => {
   initialElement = view(initialState)
   #-
@@ -323,7 +306,7 @@ export render = (view, initialState, containerId) => {
   return ()
 }
 
-renderWithSubscriptions :: View a -> a -> List (Subscription a) -> String -> ()
+renderWithSubscriptions :: (a -> Element) -> a -> List (Subscription a) -> String -> ()
 export renderWithSubscriptions = (view, initialState, subscriptions, containerId) => {
   render(view, initialState, containerId)
 
