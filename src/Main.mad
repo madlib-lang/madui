@@ -2,6 +2,8 @@ import type { Wish } from "Wish"
 import { fulfill } from "Wish"
 import { fromList, get } from "Dictionary"
 import { fromMaybe } from "Maybe"
+import {} from "Number"
+
 
 #-
 import { attributesModule, h, init, propsModule, eventListenersModule } from "snabbdom"
@@ -138,8 +140,6 @@ const objectifyAttrs = attrs => attrs.reduce((obj, attr) => {
 -#
 
 
-
-
 id :: String -> Attribute
 export id = AttributeId
 
@@ -197,8 +197,30 @@ export onTransitionEnd = AttributeOnTransitionEnd
 text :: String -> Element
 export text = (content) => #- content -#
 
-tag :: String -> List Attribute -> List Element -> Element
-export tag = (tagName, attrs, children) => #- h(tagName, objectifyAttrs(attrs), children) -#
+
+
+interface JSXChildren a {
+  toElement :: a -> Element
+}
+
+instance JSXChildren Element {
+  toElement = (x) => x
+}
+
+instance JSXChildren String {
+  toElement = text
+}
+
+instance JSXChildren () {
+  toElement = (_) => #- null -#
+}
+
+
+tag :: JSXChildren a => String -> List Attribute -> List a -> Element
+export tag = (tagName, attrs, children) => #- {
+  return h(tagName, objectifyAttrs(attrs), children)
+} -#
+
 
 // TAGS - start
 
@@ -252,7 +274,7 @@ export wbr = tag("wbr")
 empty :: List Attribute -> List Element -> Element
 export empty = (attrs, children) => #- null -#
 
-link :: List Attribute -> List Element -> Element
+link :: JSXChildren a => List Attribute -> List a -> Element
 export link = (attrs, children) => #-{
   const objAttrs = objectifyAttrs(attrs);
   if (objAttrs.to) {
