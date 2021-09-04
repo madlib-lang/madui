@@ -1,5 +1,5 @@
 {
-  "buildHash": "2981c7d4957b0b72f90e5b0990960b3a",
+  "buildHash": "ca8ab31b68a0c5b51fb2fdb40f74ce8a",
   "versionHash": "d233662f9c26d1a06118c93ef2fd1de9",
   "api": {
     "apiNames": {
@@ -15,7 +15,7 @@
       "h2": "JSXChildren a => List Attribute -> List a -> Element",
       "h5": "JSXChildren a => List Attribute -> List a -> Element",
       "time": "JSXChildren a => List Attribute -> List a -> Element",
-      "empty": "List Attribute -> List Element -> Element",
+      "empty": "JSXChildren a => List Attribute -> List a -> Element",
       "progress": "JSXChildren a => List Attribute -> List a -> Element",
       "mark": "JSXChildren a => List Attribute -> List a -> Element",
       "text": "String -> Element",
