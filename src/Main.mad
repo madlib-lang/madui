@@ -24,10 +24,62 @@ export type Key
   = KEY_ENTER
   | KEY_BACKSPACE
   | KEY_ANY
+  | KEY_A
+  | KEY_B
+  | KEY_C
+  | KEY_D
+  | KEY_E
+  | KEY_F
+  | KEY_G
+  | KEY_H
+  | KEY_I
+  | KEY_J
+  | KEY_K
+  | KEY_L
+  | KEY_M
+  | KEY_N
+  | KEY_O
+  | KEY_P
+  | KEY_Q
+  | KEY_R
+  | KEY_S
+  | KEY_T
+  | KEY_U
+  | KEY_V
+  | KEY_W
+  | KEY_X
+  | KEY_Y
+  | KEY_Z
 
 KEY_CODE_MAPPINGS = fromList([
   <13, KEY_ENTER>,
   <8, KEY_BACKSPACE>,
+  <65, KEY_A>,
+  <66, KEY_B>,
+  <67, KEY_C>,
+  <68, KEY_D>,
+  <69, KEY_E>,
+  <70, KEY_F>,
+  <71, KEY_G>,
+  <72, KEY_H>,
+  <73, KEY_I>,
+  <74, KEY_J>,
+  <75, KEY_K>,
+  <76, KEY_L>,
+  <77, KEY_M>,
+  <78, KEY_N>,
+  <79, KEY_O>,
+  <80, KEY_P>,
+  <81, KEY_Q>,
+  <82, KEY_R>,
+  <83, KEY_S>,
+  <84, KEY_T>,
+  <85, KEY_U>,
+  <86, KEY_V>,
+  <87, KEY_W>,
+  <88, KEY_X>,
+  <89, KEY_Y>,
+  <90, KEY_Z>,
 ])
 
 getKeyFromCode :: Number -> Key
@@ -36,25 +88,52 @@ getKeyFromCode = (keyCode) => fromMaybe(KEY_ANY, get(keyCode, KEY_CODE_MAPPINGS)
 export type Event
   = AbstractEvent({ eventType :: String })
   | ClickEvent({ eventType :: String })
-  | InputEvent({ eventType :: String, target :: { value :: String } })
-  | KeyPressEvent({ eventType :: String, key :: Key })
+  | InputEvent({
+      eventType :: String,
+      target :: { value :: String },
+      data :: String,
+      inputType :: String, // Make an InputType type for it
+    })
+  | KeyboardEvent({
+      eventType :: String,
+      key :: Key,
+      altKey :: Boolean,
+      ctrlKey :: Boolean,
+      shiftKey :: Boolean,
+    })
   | UrlEvent({ url :: String })
 
-#-
-const buildKeyPressEvent = event => {
-  const key = getKeyFromCode(event.keyCode, KEY_CODE_MAPPINGS)
+// https://www.w3schools.com/jsref/obj_keyboardevent.asp
+buildKeyboardEvent = (e) => {
+  k = getKeyFromCode(e.keyCode)
 
-  return KeyPressEvent({ ...event, key })
+  return KeyboardEvent({
+    eventType: e.eventType,
+    key: k,
+    altKey: e.altKey,
+    ctrlKey: e.ctrlKey,
+    shiftKey: e.shiftKey,
+  })
 }
 
+buildInputEvent = (e) => ({
+  eventType: e.eventType,
+  target: e.target,
+  data: e.data,
+  inputType: e.inputType,
+})
+
+#-
 const EventConstructors = Object.freeze({
   mouseout: AbstractEvent,
   mouseover: AbstractEvent,
   change: AbstractEvent,
   click: ClickEvent,
-  input: InputEvent,
-  keypress: buildKeyPressEvent,
-  transitionend: AbstractEvent
+  input: buildInputEvent,
+  keypress: buildKeyboardEvent,
+  keydown: buildKeyboardEvent,
+  keyup: buildKeyboardEvent,
+  transitionend: AbstractEvent,
 })
 -#
 
@@ -82,6 +161,8 @@ export type Attribute
   | AttributeOnChange(Action a)
   | AttributeOnInput(Action a)
   | AttributeOnKeyPress(Action a)
+  | AttributeOnKeyDown(Action a)
+  | AttributeOnKeyUp(Action a)
   | AttributeOnTransitionEnd(Action a)
 
 
@@ -190,6 +271,12 @@ export onInput = AttributeOnInput
 
 onKeyPress :: Action a -> Attribute
 export onKeyPress = AttributeOnKeyPress
+
+onKeyDown :: Action a -> Attribute
+export onKeyDown = AttributeOnKeyDown
+
+onKeyUp :: Action a -> Attribute
+export onKeyUp = AttributeOnKeyUp
 
 onTransitionEnd :: Action a -> Attribute
 export onTransitionEnd = AttributeOnTransitionEnd
