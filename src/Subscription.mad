@@ -1,0 +1,6 @@
+export alias Subscription a = ((a -> a) -> {}) -> {}
+
+every :: Integer -> (a -> a) -> Subscription a
+export every = (ms, fn, dispatch) => #-{
+  setInterval(() => { dispatch(fn) }, ms);
+}-#

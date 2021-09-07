@@ -1,0 +1,200 @@
+#-
+import { h } from "snabbdom"
+-#
+
+import type { Attribute } from "@/Attribute"
+
+import { reduce } from "List"
+import { wrapEventHandler } from "@/CoreUtils"
+import { EventConstructors } from "@/Event"
+
+
+export type Element a = Element
+
+
+#-
+const getAttributeTuple = attr =>
+  [attr.__constructor.substr(9).toLowerCase(), attr.__args[0]]
+
+
+const PROP_NAMES = [
+  "value"
+]
+
+
+const objectifyAttrs = (env, attrs) => reduce(obj => attr => {
+  const [attrName, attrValue] = getAttributeTuple(attr)
+
+  if (attr.__constructor == "AttributeStyle") {
+    const items = attr.__args[0].__args[0]
+    const styleObj = reduce(obj => ([key, value]) => ({
+      ...obj,
+      [key]: value,
+    }))({})(items)
+    return { ...obj, style: styleObj }
+  } else if (attr.__constructor == "StringAttribute") {
+    return { ...obj, attrs: { ...obj.attrs, [attr.__args[0][0]]: attr.__args[0][1] }}
+  } else if (attrName === "key") {
+    return { ...obj, key: attrValue }
+  } else if (PROP_NAMES.includes(attrName)) {
+    return { ...obj, props: { ...obj.props, [attrName]: attrValue }}
+  } else if (attrName.substr(0, 2) === "on") {
+    const eventName = attrName.substr(2)
+    const ctor = EventConstructors[eventName]
+    return { ...obj, on: { ...obj.on, [eventName]: wrapEventHandler(env, ctor, attrValue) }}
+  } else {
+    return { ...obj, attrs: { ...obj.attrs, [attrName]: attrValue }}
+  }
+})({})(attrs)
+
+
+const arrayifyChildren = (madlistChildren) => {
+  let jsChildren = []
+  while (madlistChildren !== null) {
+    jsChildren.push(madlistChildren.v)
+    madlistChildren = madlistChildren.n
+  }
+
+  return jsChildren
+}
+-#
+
+
+tag :: String -> List (Attribute a) -> List (Element a) -> Element a
+export tag = (tagName, attrs, children) => #- {
+  return h(tagName, objectifyAttrs(window.env, attrs), arrayifyChildren(children))
+} -#
+
+
+
+export a = tag("a")
+export abbr = tag("abbr")
+export address = tag("address")
+export area = tag("area")
+export article = tag("article")
+export aside = tag("aside")
+export audio = tag("audio")
+export b = tag("b")
+export bdi = tag("bdi")
+export bdo = tag("bdo")
+export blockquote = tag("blockquote")
+export br = tag("br")
+export button = tag("button")
+export canvas = tag("canvas")
+export caption = tag("caption")
+export cite = tag("cite")
+export code = tag("code")
+export col = tag("col")
+export colgroup = tag("colgroup")
+export content = tag("content")
+export data = tag("data")
+export datalist = tag("datalist")
+export dd = tag("dd")
+export del = tag("del")
+export details = tag("details")
+export dfn = tag("dfn")
+export dialog = tag("dialog")
+export div = tag("div")
+export dl = tag("dl")
+export dt = tag("dt")
+export em = tag("em")
+export embed = tag("embed")
+export fieldset = tag("fieldset")
+export figcaption = tag("figcaption")
+export figure = tag("figure")
+export footer = tag("footer")
+export form = tag("form")
+export h1 = tag("h1")
+export h2 = tag("h2")
+export h3 = tag("h3")
+export h4 = tag("h4")
+export h5 = tag("h5")
+export h6 = tag("h6")
+export header = tag("header")
+export hgroup = tag("hgroup")
+export hr = tag("hr")
+export i = tag("i")
+export iframe = tag("iframe")
+export img = tag("img")
+export input = tag("input")
+export ins = tag("ins")
+export kbd = tag("kbd")
+export label = tag("label")
+export legend = tag("legend")
+export li = tag("li")
+export main = tag("main")
+export mapElement = tag("map")
+export mark = tag("mark")
+export menu = tag("menu")
+export menuitem = tag("menuitem")
+export meta = tag("meta")
+export meter = tag("meter")
+export nav = tag("nav")
+export noscript = tag("noscript")
+export object = tag("object")
+export ol = tag("ol")
+export optgroup = tag("optgroup")
+export option = tag("option")
+export output = tag("output")
+export p = tag("p")
+export param = tag("param")
+export picture = tag("picture")
+export plaintext = tag("plaintext")
+export pre = tag("pre")
+export progress = tag("progress")
+export q = tag("q")
+export rp = tag("rp")
+export rt = tag("rt")
+export rtc = tag("rtc")
+export ruby = tag("ruby")
+export s = tag("s")
+export samp = tag("samp")
+export script = tag("script")
+export section = tag("section")
+export select = tag("select")
+export shadow = tag("shadow")
+export slot = tag("slot")
+export small = tag("small")
+export source = tag("source")
+export span = tag("span")
+export strong = tag("strong")
+export sub = tag("sub")
+export summary = tag("summary")
+export sup = tag("sup")
+export table = tag("table")
+export tbody = tag("tbody")
+export td = tag("td")
+export template = tag("template")
+export textarea = tag("textarea")
+export tfoot = tag("tfoot")
+export th = tag("th")
+export thead = tag("thead")
+export time = tag("time")
+export title = tag("title")
+export tr = tag("tr")
+export track = tag("track")
+export u = tag("u")
+export ul = tag("ul")
+export var = tag("var")
+export video = tag("video")
+export wbr = tag("wbr")
+
+text :: String -> Element b
+export text = (t) => #- t -#
+
+empty :: List (Attribute b) -> List (Element b) -> Element b
+export empty = (attrs, children) => #- null -#
+
+link :: List (Attribute b) -> List (Element b) -> Element b
+export link = (attrs, children) => #-{
+  const objAttrs = objectifyAttrs(window.env, attrs);
+  if (objAttrs.attrs.to) {
+    if (!objAttrs.attrs) {
+      objAttrs.attrs = {}
+    }
+    objAttrs.attrs.href = `\#${objAttrs.attrs.to}`
+    delete objAttrs.attrs.to
+  }
+
+  return h("a", { ...objAttrs }, arrayifyChildren(children));
+}-#

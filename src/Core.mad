@@ -1,0 +1,92 @@
+import { get } from "Dictionary"
+import {} from "Number"
+
+import type { Config } from "@/Config"
+import type { Element } from "@/Element"
+
+import { runAction, wrapEventHandler } from "@/CoreUtils"
+import { EventConstructors } from "@/Event"
+
+#-
+import {
+  attributesModule,
+  init,
+  propsModule,
+  eventListenersModule,
+  styleModule
+} from "snabbdom"
+-#
+
+
+
+getUrl :: {} -> String
+export getUrl = (_) => #- document.location.hash.substr(1) || "/" -#
+
+
+
+/**
+ * render - boostraps the app and takes a component, and an initial state as parameters
+ */
+render :: (a -> Element a) -> a -> String -> {}
+export render = (view, initialState, containerId) => {
+  #-
+  window.env = {
+    patch: null,
+    currentElement: null,
+    currentState: null,
+    rootView: null,
+  }
+  -#
+  initialElement = view(initialState)
+  #-
+  const patch = init([attributesModule, propsModule, eventListenersModule, styleModule])
+  patch(document.getElementById(containerId), initialElement)
+
+  window.env.patch = patch
+  window.env.currentElement = initialElement
+  window.env.rootView = view
+  window.env.currentState = initialState
+  -#
+
+  return {}
+}
+
+#-
+const startGlobalEventHandlers = (env, globalActions) => {
+  const keysForWindowEvents = [];
+  while (globalActions !== null) {
+    keysForWindowEvents.push(({
+      eventName: globalActions.v.__args[0],
+      eventHandler: globalActions.v.__args[1],
+    }))
+    globalActions = globalActions.n
+  }
+
+  keysForWindowEvents.forEach(ga => {
+    const handler = wrapEventHandler(env, EventConstructors[ga.eventName], ga.eventHandler)
+    window.addEventListener(ga.eventName, handler)
+
+    if (ga.eventName === "popstate") {
+      handler({})
+    }
+  })
+}
+-#
+
+renderWithConfig :: Config a -> (a -> Element a) -> a -> String -> {}
+export renderWithConfig = (config, view, initialState, containerId) => {
+  render(view, initialState, containerId)
+
+  #-
+  const env = window.env
+  startGlobalEventHandlers(env, config.globalEventHandlers)
+
+  let subs = config.subscriptions
+  while (subs !== null) {
+    subs.v(runAction(env))
+    subs = subs.n
+  }
+  -#
+
+  return {}
+}
