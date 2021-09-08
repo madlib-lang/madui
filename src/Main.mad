@@ -1,20 +1,14 @@
 import type { Wish } from "Wish"
+import type { Maybe } from "Maybe"
+
 import { fulfill } from "Wish"
 import { fromList, get } from "Dictionary"
-import { fromMaybe } from "Maybe"
+import { fromMaybe, Nothing } from "Maybe"
 import {} from "Number"
 
 
 #-
 import { attributesModule, h, init, propsModule, eventListenersModule } from "snabbdom"
-
-const AppEnv = {
-  patch: null,
-  currentElement: null,
-  currentState: null,
-  rootView: null,
-  onUrlChangedAction: null,
-}
 -#
 
 export type Element = Element
@@ -85,17 +79,28 @@ KEY_CODE_MAPPINGS = fromList([
 getKeyFromCode :: Number -> Key
 getKeyFromCode = (keyCode) => fromMaybe(KEY_ANY, get(keyCode, KEY_CODE_MAPPINGS))
 
+
+alias BaseEvent = {
+  bubbles :: Boolean,
+  defaultPrevented :: Boolean,
+  preventDefault :: () -> (),
+  stopImmediatePropagation :: () -> (),
+  stopPropagation :: () -> (),
+  timeStamp :: Number,
+  eventType :: String,
+}
+
 export type Event
-  = AbstractEvent({ eventType :: String })
-  | ClickEvent({ eventType :: String })
+  = AbstractEvent(BaseEvent)
+  | MouseEvent(BaseEvent)
   | InputEvent({
-      eventType :: String,
+      ...BaseEvent,
       target :: { value :: String },
       data :: String,
       inputType :: String, // Make an InputType type for it
     })
   | KeyboardEvent({
-      eventType :: String,
+      ...BaseEvent,
       key :: Key,
       altKey :: Boolean,
       ctrlKey :: Boolean,
@@ -108,6 +113,12 @@ buildKeyboardEvent = (e) => {
   k = getKeyFromCode(e.keyCode)
 
   return KeyboardEvent({
+    bubbles: e.bubbles,
+    defaultPrevented: e.defaultPrevented,
+    preventDefault: e.preventDefault,
+    stopImmediatePropagation: e.stopImmediatePropagation,
+    stopPropagation: e.stopPropagation,
+    timeStamp: e.timeStamp,
     eventType: e.eventType,
     key: k,
     altKey: e.altKey,
@@ -116,24 +127,50 @@ buildKeyboardEvent = (e) => {
   })
 }
 
-buildInputEvent = (e) => ({
+buildInputEvent = (e) => InputEvent({
+  bubbles: e.bubbles,
+  defaultPrevented: e.defaultPrevented,
+  preventDefault: e.preventDefault,
+  stopImmediatePropagation: e.stopImmediatePropagation,
+  stopPropagation: e.stopPropagation,
+  timeStamp: e.timeStamp,
   eventType: e.eventType,
   target: e.target,
   data: e.data,
   inputType: e.inputType,
 })
 
+buildMouseEvent = (e) => MouseEvent({
+  bubbles: e.bubbles,
+  defaultPrevented: e.defaultPrevented,
+  preventDefault: e.preventDefault,
+  stopImmediatePropagation: e.stopImmediatePropagation,
+  stopPropagation: e.stopPropagation,
+  timeStamp: e.timeStamp,
+  eventType: e.eventType,
+})
+
+buildAbstractEvent = (e) => AbstractEvent({
+  bubbles: e.bubbles,
+  defaultPrevented: e.defaultPrevented,
+  preventDefault: e.preventDefault,
+  stopImmediatePropagation: e.stopImmediatePropagation,
+  stopPropagation: e.stopPropagation,
+  timeStamp: e.timeStamp,
+  eventType: e.eventType,
+})
+
 #-
 const EventConstructors = Object.freeze({
-  mouseout: AbstractEvent,
-  mouseover: AbstractEvent,
-  change: AbstractEvent,
-  click: ClickEvent,
+  mouseout: buildMouseEvent,
+  mouseover: buildMouseEvent,
+  change: buildAbstractEvent,
+  click: buildMouseEvent,
   input: buildInputEvent,
   keypress: buildKeyboardEvent,
   keydown: buildKeyboardEvent,
   keyup: buildKeyboardEvent,
-  transitionend: AbstractEvent,
+  transitionend: buildAbstractEvent,
 })
 -#
 
@@ -167,21 +204,21 @@ export type Attribute
 
 
 #-
-const getCurrentState = () => AppEnv.currentState
 
-const runAction = updater => {
-  AppEnv.currentState = updater(getCurrentState())
-  const newElement = AppEnv.rootView(AppEnv.currentState)
-  AppEnv.patch(AppEnv.currentElement, newElement)
-  AppEnv.currentElement = newElement
+const runAction = env => updater => {
+  env.currentState = updater(env.currentState)
+  window.env = env
+  const newElement = env.rootView(env.currentState)
+  env.patch(env.currentElement, newElement)
+  env.currentElement = newElement
 }
 
-const wrapEventHandler = (ctor, handler) => {
+const wrapEventHandler = (env, ctor, handler) => {
   return event => {
     event.eventType = event.type
     // So now calling an event handler gives us a list of wishes
-    const wishes = handler(AppEnv.currentState)(ctor(event))
-    wishes.forEach(fulfill(runAction)(runAction))
+    const wishes = handler(env.currentState)(ctor(event))
+    wishes.forEach(fulfill(runAction(env))(runAction(env)))
   }
 }
 
@@ -202,7 +239,7 @@ const PROP_NAMES = [
   "value"
 ]
 
-const objectifyAttrs = attrs => attrs.reduce((obj, attr) => {
+const objectifyAttrs = (env, attrs) => attrs.reduce((obj, attr) => {
   const [attrName, attrValue] = getAttributeTuple(attr)
   if (attrName === "key") {
     return { ...obj, key: attrValue }
@@ -213,7 +250,7 @@ const objectifyAttrs = attrs => attrs.reduce((obj, attr) => {
   } else if (attrName.substr(0, 2) === "on") {
     const eventName = attrName.substr(2)
     const ctor = EventConstructors[eventName]
-    return { ...obj, on: { ...obj.on, [eventName]: wrapEventHandler(ctor, attrValue) }}
+    return { ...obj, on: { ...obj.on, [eventName]: wrapEventHandler(env, ctor, attrValue) }}
   } else {
     return { ...obj, [attrName]: attrValue };
   }
@@ -305,7 +342,7 @@ instance JSXChildren () {
 
 tag :: JSXChildren a => String -> List Attribute -> List a -> Element
 export tag = (tagName, attrs, children) => #- {
-  return h(tagName, objectifyAttrs(attrs), children)
+  return h(tagName, objectifyAttrs(window.env, attrs), children)
 } -#
 
 
@@ -363,7 +400,7 @@ export empty = (attrs, children) => #- null -#
 
 link :: JSXChildren a => List Attribute -> List a -> Element
 export link = (attrs, children) => #-{
-  const objAttrs = objectifyAttrs(attrs);
+  const objAttrs = objectifyAttrs(window.env, attrs);
   if (objAttrs.to) {
     if (!objAttrs.attrs) {
       objAttrs.attrs = {}
@@ -396,30 +433,81 @@ export syncAction = (stateUpdate) => (
 )
 
 
+
+export alias Config = {
+  onUrlChanged :: Maybe (Action a),
+  subscriptions :: List Subscription,
+}
+
+DEFAULT_CONFIG :: Config
+export DEFAULT_CONFIG = {
+  onUrlChanged: Nothing,
+  subscriptions: [],
+}
+
+
 /**
  * render - boostraps the app and takes a component, and an initial state as parameters
  */
 render :: (a -> Element) -> a -> String -> ()
 export render = (view, initialState, containerId) => {
+  #-
+  window.env = {
+    patch: null,
+    currentElement: null,
+    currentState: null,
+    rootView: null,
+    onUrlChangedAction: null,
+  }
+  -#
   initialElement = view(initialState)
   #-
   const patch = init([attributesModule, propsModule, eventListenersModule])
   patch(document.getElementById(containerId), initialElement)
 
-  AppEnv.patch = patch
-  AppEnv.currentElement = initialElement
-  AppEnv.rootView = view
-  AppEnv.currentState = initialState
+  window.env.patch = patch
+  window.env.currentElement = initialElement
+  window.env.rootView = view
+  window.env.currentState = initialState
   -#
 
   return ()
 }
 
-renderWithSubscriptions :: (a -> Element) -> a -> List (Subscription a) -> String -> ()
-export renderWithSubscriptions = (view, initialState, subscriptions, containerId) => {
+
+renderWithConfig :: Config -> (a -> Element) -> a -> String -> ()
+export renderWithConfig = (config, view, initialState, containerId) => {
   render(view, initialState, containerId)
 
-  #- subscriptions.forEach(sub => sub(runAction)) -#
+  onUrlChangedAction = fromMaybe(#- null -#, config.onUrlChanged)
+  #-
+  const env = window.env
+  env.onUrlChangedAction = onUrlChangedAction
+
+  if (env.onUrlChangedAction != null) {
+
+    const popStateHandler = function(event) {
+      const path = document.location.hash.substr(1) || "/";
+      const wishes = env.onUrlChangedAction(env.currentState)(UrlEvent({ url: path }))
+      wishes.forEach(fulfill(runAction(env))(runAction(env)))
+    }
+
+    window.addEventListener("popstate", popStateHandler)
+
+    popStateHandler(null)
+  }
+
+  config.subscriptions.forEach(sub => sub(runAction(env)))
+  -#
 
   return ()
 }
+
+// renderWithSubscriptions :: (a -> Element) -> a -> List (Subscription a) -> String -> ()
+// export renderWithSubscriptions = (view, initialState, subscriptions, containerId) => {
+//   render(view, initialState, containerId)
+
+//   #- subscriptions.forEach(sub => sub(runAction)) -#
+
+//   return ()
+// }
