@@ -1,0 +1,95 @@
+import { get } from "Dictionary"
+import {} from "Number"
+
+import type { GlobalAction } from "@/Action"
+import type { Element } from "@/Element"
+import type { Subscription } from "@/Subscription"
+
+import { runAction, wrapEventHandler } from "@/CoreUtils"
+import { EventConstructors } from "@/Event"
+
+#-
+import {
+  attributesModule,
+  init,
+  propsModule,
+  eventListenersModule
+} from "snabbdom"
+-#
+
+
+
+getUrl :: () -> String
+export getUrl = (_) => #- document.location.hash.substr(1) || "/" -#
+
+
+
+export alias Config a = {
+  subscriptions :: List Subscription,
+  globalEventHandlers :: List (GlobalAction a),
+}
+
+DEFAULT_CONFIG :: Config a
+export DEFAULT_CONFIG = {
+  subscriptions: [],
+  globalEventHandlers: [],
+}
+
+
+/**
+ * render - boostraps the app and takes a component, and an initial state as parameters
+ */
+render :: (a -> Element a) -> a -> String -> ()
+export render = (view, initialState, containerId) => {
+  #-
+  window.env = {
+    patch: null,
+    currentElement: null,
+    currentState: null,
+    rootView: null,
+  }
+  -#
+  initialElement = view(initialState)
+  #-
+  const patch = init([attributesModule, propsModule, eventListenersModule])
+  patch(document.getElementById(containerId), initialElement)
+
+  window.env.patch = patch
+  window.env.currentElement = initialElement
+  window.env.rootView = view
+  window.env.currentState = initialState
+  -#
+
+  return ()
+}
+
+#-
+const startGlobalEventHandlers = (env, globalActions) => {
+  const keysForWindowEvents = globalActions.map(ga => ({
+    eventName: ga.__args[0],
+    eventHandler: ga.__args[1],
+  }))
+
+  keysForWindowEvents.forEach(ga => {
+    const handler = wrapEventHandler(env, EventConstructors[ga.eventName], ga.eventHandler)
+    window.addEventListener(ga.eventName, handler)
+
+    if (ga.eventName === "popstate") {
+      handler({})
+    }
+  })
+}
+-#
+
+renderWithConfig :: Config a -> (a -> Element a) -> a -> String -> ()
+export renderWithConfig = (config, view, initialState, containerId) => {
+  render(view, initialState, containerId)
+
+  #-
+  const env = window.env
+  startGlobalEventHandlers(env, config.globalEventHandlers)
+  config.subscriptions.forEach(sub => sub(runAction(env)))
+  -#
+
+  return ()
+}

@@ -1,0 +1,20 @@
+import { fulfill } from "Wish"
+
+export runAction = #- env => updater => {
+  env.currentState = updater(env.currentState)
+  window.env = env
+  const newElement = env.rootView(env.currentState)
+  env.patch(env.currentElement, newElement)
+  env.currentElement = newElement
+} -#
+
+
+export wrapEventHandler = #- (env, ctor, handler) => {
+  return event => {
+    event.eventType = event.type
+    // Calling an event handler gives us a list of wishes
+    const wishes = handler(env.currentState)(ctor(event))
+    wishes.forEach(fulfill(runAction(env))(runAction(env)))
+  }
+}
+-#
