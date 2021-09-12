@@ -1,0 +1,21 @@
+import { append } from "List"
+
+import type { GlobalAction } from "@/Action"
+import type { Subscription } from "@/Subscription"
+
+export alias Config a = {
+  subscriptions :: List (Subscription a),
+  globalEventHandlers :: List (GlobalAction a),
+}
+
+DEFAULT_CONFIG :: Config a
+export DEFAULT_CONFIG = {
+  subscriptions: [],
+  globalEventHandlers: [],
+}
+
+addGlobalEventHandler :: GlobalAction a -> Config a -> Config a
+export addGlobalEventHandler = (action, config) => ({
+  ...config,
+  globalEventHandlers: append(action, config.globalEventHandlers)
+})

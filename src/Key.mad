@@ -1,9 +1,8 @@
 import { fromMaybe } from "Maybe"
 import { fromList, get } from "Dictionary"
 
-// https://keycode.info/
-// http://gcctech.org/csc/javascript/javascript_keycodes.htm
-// https://github.com/wesbos/keycodes/blob/gh-pages/scripts.js
+
+
 export type Key
   = KEY_ANY
   | KEY_BREAK

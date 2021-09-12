@@ -154,6 +154,7 @@ export EventConstructors = #- Object.freeze({
   ratechange: buildAbstractEvent,
   reset: buildAbstractEvent,
   resize: buildAbstractEvent,
+  scroll: buildAbstractEvent,
   transitionend: buildAbstractEvent,
   unload: buildAbstractEvent,
 })

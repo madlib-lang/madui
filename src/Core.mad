@@ -1,9 +1,8 @@
 import { get } from "Dictionary"
 import {} from "Number"
 
-import type { GlobalAction } from "@/Action"
+import type { Config } from "@/Config"
 import type { Element } from "@/Element"
-import type { Subscription } from "@/Subscription"
 
 import { runAction, wrapEventHandler } from "@/CoreUtils"
 import { EventConstructors } from "@/Event"
@@ -22,18 +21,6 @@ import {
 getUrl :: () -> String
 export getUrl = (_) => #- document.location.hash.substr(1) || "/" -#
 
-
-
-export alias Config a = {
-  subscriptions :: List Subscription,
-  globalEventHandlers :: List (GlobalAction a),
-}
-
-DEFAULT_CONFIG :: Config a
-export DEFAULT_CONFIG = {
-  subscriptions: [],
-  globalEventHandlers: [],
-}
 
 
 /**

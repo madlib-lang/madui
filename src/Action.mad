@@ -42,6 +42,9 @@ export onOnline = GlobalAction("online")
 onResize :: Action a -> GlobalAction a
 export onResize = GlobalAction("resize")
 
+onBodyScroll :: Action a -> GlobalAction a
+export onBodyScroll = GlobalAction("scroll")
+
 onUnload :: Action a -> GlobalAction a
 export onUnload = GlobalAction("unload")
 

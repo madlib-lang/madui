@@ -121,6 +121,7 @@ export type Attribute a
   | AttributeOnProgress(Action a)
   | AttributeOnRateChange(Action a)
   | AttributeOnReset(Action a)
+  | AttributeOnScroll(Action a)
   | AttributeOnTransitionEnd(Action a)
   | AttributePlaceholder(String)
   | AttributeSrc(String)
@@ -468,6 +469,9 @@ export onRateChange = AttributeOnRateChange
 onReset :: (Action a) -> Attribute a
 export onReset = AttributeOnReset
 
+onScroll :: (Action a) -> Attribute a
+export onScroll = AttributeOnScroll
+
 onTransitionEnd :: Action a -> Attribute a
 export onTransitionEnd = AttributeOnTransitionEnd
 
@@ -483,8 +487,8 @@ export src = AttributeSrc
 tabindex :: Number -> Attribute a
 export tabindex = AttributeTabIndex
 
-title :: String -> Attribute a
-export title = AttributeTitle
+titleAttr :: String -> Attribute a
+export titleAttr = AttributeTitle
 
 to :: String -> Attribute a
 export to = AttributeTo
