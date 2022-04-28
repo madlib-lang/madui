@@ -1,0 +1,690 @@
+import type { Method } from "Http"
+
+import {
+  GET,
+  POST,
+  PUT,
+  DELETE,
+  PATCH,
+  HEAD,
+  OPTIONS,
+  CONNECT,
+  TRACE
+} from "Http"
+
+import type { Action } from "@/Action"
+
+
+// TODO: Check what to do with body attributes like
+// onoffline, ononline, onpagehide, onpopstate
+
+// https://www.w3schools.com/tags/ref_attributes.asp
+// https://www.w3schools.com/tags/ref_standardattributes.asp
+
+export type Attribute a
+  = StringAttribute(#[String, String])
+  | AttributeAccept(String)
+  | AttributeAcceptCharset(String)
+  | AttributeAccessKey(String)
+  | AttributeAction(String)
+  | AttributeAlt(String)
+  | AttributeAsync(Boolean)
+  | AttributeAutoComplete(String)
+  | AttributeAutoFocus(Boolean)
+  | AttributeAutoPlay(Boolean)
+  | AttributeChecked(Boolean)
+  | AttributeCite(String)
+  | AttributeClass(String)
+  | AttributeCols(Integer)
+  | AttributeColSpan(Integer)
+  | AttributeContentEditable(Boolean)
+  | AttributeControls(Boolean)
+  | AttributeCoords(String)
+  | AttributeData(String)
+  | AttributeDateTime(String)
+  | AttributeDefault(Boolean)
+  | AttributeDefer(Boolean)
+  | AttributeDir(String)
+  | AttributeDirName(String)
+  | AttributeDisabled(Boolean)
+  | AttributeDownload(Boolean)
+  | AttributeDraggable(Boolean)
+  | AttributeEncType(String)
+  | AttributeFor(String)
+  | AttributeForm(String)
+  | AttributeFormAction(String)
+  | AttributeHeaders(String)
+  | AttributeHeight(Integer)
+  | AttributeHidden(Boolean)
+  | AttributeHigh(Integer)
+  | AttributeHref(String)
+  | AttributeHrefLang(String)
+  | AttributeId(String)
+  | AttributeIsMap(Boolean)
+  | AttributeKey(String)
+  | AttributeKind(String)
+  | AttributeLang(String)
+  | AttributeLabel(String)
+  | AttributeList(String)
+  | AttributeLoop(Boolean)
+  | AttributeLow(Integer)
+  | AttributeMax(Integer)
+  | AttributeMaxLength(Integer)
+  | AttributeMedia(String)
+  | AttributeMethod(String)
+  | AttributeMin(Integer)
+  | AttributeMultiple(Boolean)
+  | AttributeMuted(Boolean)
+  | AttributeName(String)
+  | AttributeNoValidate(Boolean)
+  | AttributeOnAbort(Action a)
+  | AttributeOnBlur(Action a)
+  | AttributeOnCanPlay(Action a)
+  | AttributeOnCanPlayThrough(Action a)
+  | AttributeOnChange(Action a)
+  | AttributeOnClick(Action a)
+  | AttributeOnContextMenu(Action a)
+  | AttributeOnCopy(Action a)
+  | AttributeOnCueChange(Action a)
+  | AttributeOnCut(Action a)
+  | AttributeOnDblClick(Action a)
+  | AttributeOnDrag(Action a)
+  | AttributeOnDragEnd(Action a)
+  | AttributeOnDragEnter(Action a)
+  | AttributeOnDragLeave(Action a)
+  | AttributeOnDragOver(Action a)
+  | AttributeOnDragStart(Action a)
+  | AttributeOnDrop(Action a)
+  | AttributeOnDurationChange(Action a)
+  | AttributeOnEmptied(Action a)
+  | AttributeOnEnded(Action a)
+  | AttributeOnError(Action a)
+  | AttributeOnFocus(Action a)
+  | AttributeOnInput(Action a)
+  | AttributeOnInvalid(Action a)
+  | AttributeOnKeyPress(Action a)
+  | AttributeOnKeyDown(Action a)
+  | AttributeOnKeyUp(Action a)
+  | AttributeOnLoad(Action a)
+  | AttributeOnLoadedData(Action a)
+  | AttributeOnLoadedMetaData(Action a)
+  | AttributeOnLoadStart(Action a)
+  | AttributeOnMouseDown(Action a)
+  | AttributeOnMouseEnter(Action a)
+  | AttributeOnMouseLeave(Action a)
+  | AttributeOnMouseMove(Action a)
+  | AttributeOnMouseUp(Action a)
+  | AttributeOnMouseWheel(Action a)
+  | AttributeOnMouseOver(Action a)
+  | AttributeOnMouseOut(Action a)
+  | AttributeOnPaste(Action a)
+  | AttributeOnPause(Action a)
+  | AttributeOnPlay(Action a)
+  | AttributeOnPlaying(Action a)
+  | AttributeOnProgress(Action a)
+  | AttributeOnRateChange(Action a)
+  | AttributeOnReset(Action a)
+  | AttributeOnScroll(Action a)
+  | AttributeOnSearch(Action a)
+  | AttributeOnSeeked(Action a)
+  | AttributeOnSeeking(Action a)
+  | AttributeOnSelect(Action a)
+  | AttributeOnStalled(Action a)
+  | AttributeOnSubmit(Action a)
+  | AttributeOnSuspend(Action a)
+  | AttributeOnTimeUpdate(Action a)
+  | AttributeOnToggle(Action a)
+  | AttributeOnTransitionCancel(Action a)
+  | AttributeOnTransitionEnd(Action a)
+  | AttributeOnTransitionRun(Action a)
+  | AttributeOnTransitionStart(Action a)
+  | AttributeOnVolumeChange(Action a)
+  | AttributeOnWaiting(Action a)
+  | AttributeOnWheel(Action a)
+  | AttributeOpen(Boolean)
+  | AttributeOptimum(Integer)
+  | AttributePattern(String)
+  | AttributePlaceholder(String)
+  | AttributePoster(String)
+  | AttributePreload(String)
+  | AttributeReadOnly(Boolean)
+  | AttributeRel(String)
+  | AttributeRequired(Boolean)
+  | AttributeReversed(Boolean)
+  | AttributeRows(Integer)
+  | AttributeRowSpan(Integer)
+  | AttributeSandBox(Boolean)
+  | AttributeScope(String)
+  | AttributeSelected(Boolean)
+  | AttributeShape(String)
+  | AttributeSize(Integer)
+  | AttributeSizes(String)
+  | AttributeSpan(Integer)
+  | AttributeSpellCheck(String)
+  | AttributeSrc(String)
+  | AttributeSrcDoc(String)
+  | AttributeSrcLang(String)
+  | AttributeSrcSet(String)
+  | AttributeStart(Integer)
+  | AttributeStep(Integer)
+  | AttributeStyle(Dictionary String String)
+  | AttributeTabIndex(Integer)
+  | AttributeTarget(String)
+  | AttributeTitle(String)
+  | AttributeTo(String)
+  | AttributeTranslate(String)
+  | AttributeType(String)
+  | AttributeUseMap(String)
+  | AttributeValue(String)
+  | AttributeWidth(Integer)
+  | AttributeWrap(String)
+
+
+stringAttribute :: #[String, String] -> Attribute a
+export stringAttribute = StringAttribute
+
+
+accept :: String -> Attribute a
+export accept = AttributeAccept
+
+acceptCharset :: String -> Attribute a
+export acceptCharset = AttributeAcceptCharset
+
+accessKey :: String -> Attribute a
+export accessKey = AttributeAccessKey
+
+action :: String -> Attribute a
+export action = AttributeAction
+
+alt :: String -> Attribute a
+export alt = AttributeAlt
+
+async :: Boolean -> Attribute a
+export async = AttributeAsync
+
+autocomplete :: Boolean -> Attribute a
+export autocomplete = (on) => on
+  ? AttributeAutoComplete("on")
+  : AttributeAutoComplete("off")
+
+autofocus :: Boolean -> Attribute a
+export autofocus = AttributeAutoFocus
+
+autoplay :: Boolean -> Attribute a
+export autoplay = AttributeAutoPlay
+
+checked :: Boolean -> Attribute a
+export checked = AttributeChecked
+
+citeAttr :: String -> Attribute a
+export citeAttr = AttributeCite
+
+className :: String -> Attribute a
+export className = AttributeClass
+
+cols :: Integer -> Attribute a
+export cols = AttributeCols
+
+colspan :: Integer -> Attribute a
+export colspan = AttributeColSpan
+
+contenteditable :: Boolean -> Attribute a
+export contenteditable = AttributeContentEditable
+
+controls :: Boolean -> Attribute a
+export controls = AttributeControls
+
+coords :: String -> Attribute a
+export coords = AttributeCoords
+
+dataAttr :: String -> Attribute a
+export dataAttr = AttributeData
+
+datetime :: String -> Attribute a
+export datetime = AttributeDateTime
+
+default :: Boolean -> Attribute a
+export default = AttributeDefault
+
+defer :: Boolean -> Attribute a
+export defer = AttributeDefer
+
+dir :: String -> Attribute a
+export dir = AttributeDir
+
+dirname :: String -> Attribute a
+export dirname = AttributeDirName
+
+disabled :: Boolean -> Attribute a
+export disabled = AttributeDisabled
+
+download :: Boolean -> Attribute a
+export download = AttributeDownload
+
+draggable :: Boolean -> Attribute a
+export draggable = AttributeDraggable
+
+enctype :: String -> Attribute a
+export enctype = AttributeEncType
+
+for :: String -> Attribute a
+export for = AttributeFor
+
+formAttr :: String -> Attribute a
+export formAttr = AttributeForm
+
+formaction :: String -> Attribute a
+export formaction = AttributeFormAction
+
+headers :: String -> Attribute a
+export headers = AttributeHeaders
+
+height :: Integer -> Attribute a
+export height = AttributeHeight
+
+hidden :: Boolean -> Attribute a
+export hidden = AttributeHidden
+
+high :: Integer -> Attribute a
+export high = AttributeHigh
+
+href :: String -> Attribute a
+export href = AttributeHref
+
+hreflang :: String -> Attribute a
+export hreflang = AttributeHrefLang
+
+id :: String -> Attribute a
+export id = AttributeId
+
+inputType :: String -> Attribute a
+export inputType = AttributeType
+
+ismap :: Boolean -> Attribute a
+export ismap = AttributeIsMap
+
+key :: String -> Attribute a
+export key = AttributeKey
+
+kind :: String -> Attribute a
+export kind = AttributeKind
+
+labelAttr :: String -> Attribute a
+export labelAttr = AttributeLabel
+
+// TODO: That String should be a LanguageCode instead
+// ref: https://www.w3schools.com/tags/ref_language_codes.asp
+lang :: String -> Attribute a
+export lang = AttributeLang
+
+list :: String -> Attribute a
+export list = AttributeList
+
+loop :: Boolean -> Attribute a
+export loop = AttributeLoop
+
+low :: Integer -> Attribute a
+export low = AttributeLow
+
+max :: Integer -> Attribute a
+export max = AttributeMax
+
+maxlength :: Integer -> Attribute a
+export maxlength = AttributeMaxLength
+
+media :: String -> Attribute a
+export media = AttributeMedia
+
+method :: Method -> Attribute a
+export method = where {
+  GET =>
+    AttributeMethod("get")
+
+  POST =>
+    AttributeMethod("post")
+
+  PUT =>
+    AttributeMethod("put")
+
+  DELETE =>
+    AttributeMethod("delete")
+
+  PATCH =>
+    AttributeMethod("patch")
+
+  HEAD =>
+    AttributeMethod("head")
+
+  OPTIONS =>
+    AttributeMethod("options")
+
+  CONNECT =>
+    AttributeMethod("connect")
+
+  TRACE =>
+    AttributeMethod("trace")
+}
+
+min :: Integer -> Attribute a
+export min = AttributeMin
+
+multiple :: Boolean -> Attribute a
+export multiple = AttributeMultiple
+
+muted :: Boolean -> Attribute a
+export muted = AttributeMuted
+
+name :: String -> Attribute a
+export name = AttributeName
+
+novalidate :: Boolean -> Attribute a
+export novalidate = AttributeNoValidate
+
+onAbort :: (Action a) -> Attribute a
+export onAbort = AttributeOnAbort
+
+onBlur :: (Action a) -> Attribute a
+export onBlur = AttributeOnBlur
+
+onCanPlay :: (Action a) -> Attribute a
+export onCanPlay = AttributeOnCanPlay
+
+onCanPlayThrough :: (Action a) -> Attribute a
+export onCanPlayThrough = AttributeOnCanPlayThrough
+
+onChange :: (Action a) -> Attribute a
+export onChange = AttributeOnChange
+
+onClick :: (Action a) -> Attribute a
+export onClick = AttributeOnClick
+
+onContextMenu :: (Action a) -> Attribute a
+export onContextMenu = AttributeOnContextMenu
+
+onCopy :: (Action a) -> Attribute a
+export onCopy = AttributeOnCopy
+
+onCueChange :: (Action a) -> Attribute a
+export onCueChange = AttributeOnCueChange
+
+onCut :: (Action a) -> Attribute a
+export onCut = AttributeOnCut
+
+onDblClick :: (Action a) -> Attribute a
+export onDblClick = AttributeOnDblClick
+
+onDrag :: (Action a) -> Attribute a
+export onDrag = AttributeOnDrag
+
+onDragEnd :: (Action a) -> Attribute a
+export onDragEnd = AttributeOnDragEnd
+
+onDragEnter :: (Action a) -> Attribute a
+export onDragEnter = AttributeOnDragEnter
+
+onDragLeave :: (Action a) -> Attribute a
+export onDragLeave = AttributeOnDragLeave
+
+onDragOver :: (Action a) -> Attribute a
+export onDragOver = AttributeOnDragOver
+
+onDragStart :: (Action a) -> Attribute a
+export onDragStart = AttributeOnDragStart
+
+onDrop :: (Action a) -> Attribute a
+export onDrop = AttributeOnDrop
+
+onDurationChange :: (Action a) -> Attribute a
+export onDurationChange = AttributeOnDurationChange
+
+onEmptied :: (Action a) -> Attribute a
+export onEmptied = AttributeOnEmptied
+
+onEnded :: (Action a) -> Attribute a
+export onEnded = AttributeOnEnded
+
+onError :: (Action a) -> Attribute a
+export onError = AttributeOnError
+
+onFocus :: (Action a) -> Attribute a
+export onFocus = AttributeOnFocus
+
+onInput :: (Action a) -> Attribute a
+export onInput = AttributeOnInput
+
+onInvalid :: (Action a) -> Attribute a
+export onInvalid = AttributeOnInvalid
+
+onKeyPress :: Action a -> Attribute a
+export onKeyPress = AttributeOnKeyPress
+
+onKeyDown :: Action a -> Attribute a
+export onKeyDown = AttributeOnKeyDown
+
+onKeyUp :: Action a -> Attribute a
+export onKeyUp = AttributeOnKeyUp
+
+onLoad :: Action a -> Attribute a
+export onLoad = AttributeOnLoad
+
+onLoadedData :: Action a -> Attribute a
+export onLoadedData = AttributeOnLoadedData
+
+onLoadedMetaData :: Action a -> Attribute a
+export onLoadedMetaData = AttributeOnLoadedMetaData
+
+onLoadStart :: Action a -> Attribute a
+export onLoadStart = AttributeOnLoadStart
+
+onMouseDown :: (Action a) -> Attribute a
+export onMouseDown = AttributeOnMouseDown
+
+onMouseEnter :: (Action a) -> Attribute a
+export onMouseEnter = AttributeOnMouseEnter
+
+onMouseLeave :: (Action a) -> Attribute a
+export onMouseLeave = AttributeOnMouseLeave
+
+onMouseMove :: (Action a) -> Attribute a
+export onMouseMove = AttributeOnMouseMove
+
+onMouseOut :: (Action a) -> Attribute a
+export onMouseOut = AttributeOnMouseOut
+
+onMouseOver :: (Action a) -> Attribute a
+export onMouseOver = AttributeOnMouseOver
+
+onMouseUp :: (Action a) -> Attribute a
+export onMouseUp = AttributeOnMouseUp
+
+onMouseWheel :: (Action a) -> Attribute a
+export onMouseWheel = AttributeOnMouseWheel
+
+onPaste :: (Action a) -> Attribute a
+export onPaste = AttributeOnPaste
+
+onPause :: (Action a) -> Attribute a
+export onPause = AttributeOnPause
+
+onPlay :: (Action a) -> Attribute a
+export onPlay = AttributeOnPlay
+
+onPlaying :: (Action a) -> Attribute a
+export onPlaying = AttributeOnPlaying
+
+onProgress :: (Action a) -> Attribute a
+export onProgress = AttributeOnProgress
+
+onRateChange :: (Action a) -> Attribute a
+export onRateChange = AttributeOnRateChange
+
+onReset :: (Action a) -> Attribute a
+export onReset = AttributeOnReset
+
+onScroll :: (Action a) -> Attribute a
+export onScroll = AttributeOnScroll
+
+onSearch :: (Action a) -> Attribute a
+export onSearch = AttributeOnSearch
+
+onSeeked :: (Action a) -> Attribute a
+export onSeeked = AttributeOnSeeked
+
+onSeeking :: (Action a) -> Attribute a
+export onSeeking = AttributeOnSeeking
+
+onSelect :: (Action a) -> Attribute a
+export onSelect = AttributeOnSelect
+
+onStalled :: (Action a) -> Attribute a
+export onStalled = AttributeOnStalled
+
+onSubmit :: (Action a) -> Attribute a
+export onSubmit = AttributeOnSubmit
+
+onSuspend :: (Action a) -> Attribute a
+export onSuspend = AttributeOnSuspend
+
+onTimeUpdate :: (Action a) -> Attribute a
+export onTimeUpdate = AttributeOnTimeUpdate
+
+onToggle :: (Action a) -> Attribute a
+export onToggle = AttributeOnToggle
+
+onTransitionCancel :: Action a -> Attribute a
+export onTransitionCancel = AttributeOnTransitionCancel
+
+onTransitionEnd :: Action a -> Attribute a
+export onTransitionEnd = AttributeOnTransitionEnd
+
+onTransitionRun :: Action a -> Attribute a
+export onTransitionRun = AttributeOnTransitionRun
+
+onTransitionStart :: Action a -> Attribute a
+export onTransitionStart = AttributeOnTransitionStart
+
+onVolumeChange :: (Action a) -> Attribute a
+export onVolumeChange = AttributeOnVolumeChange
+
+onWaiting :: (Action a) -> Attribute a
+export onWaiting = AttributeOnWaiting
+
+onWheel :: (Action a) -> Attribute a
+export onWheel = AttributeOnWheel
+
+open :: Boolean -> Attribute a
+export open = AttributeOpen
+
+optimum :: Integer -> Attribute a
+export optimum = AttributeOptimum
+
+pattern :: String -> Attribute a
+export pattern = AttributePattern
+
+placeholder :: String -> Attribute a
+export placeholder = AttributePlaceholder
+
+poster :: String -> Attribute a
+export poster = AttributePoster
+
+// TODO: make a type for this: preload="auto|metadata|none"
+preload :: String -> Attribute a
+export preload = AttributePreload
+
+readonly :: Boolean -> Attribute a
+export readonly = AttributeReadOnly
+
+rel :: String -> Attribute a
+export rel = AttributeRel
+
+required :: Boolean -> Attribute a
+export required = AttributeRequired
+
+reversed :: Boolean -> Attribute a
+export reversed = AttributeReversed
+
+rows :: Integer -> Attribute a
+export rows = AttributeRows
+
+rowspan :: Integer -> Attribute a
+export rowspan = AttributeRowSpan
+
+sandbox :: Boolean -> Attribute a
+export sandbox = AttributeSandBox
+
+// TODO: make a type for this: scope="col|row|colgroup|rowgroup"
+scope :: String -> Attribute a
+export scope = AttributeScope
+
+selected :: Boolean -> Attribute a
+export selected = AttributeSelected
+
+// TODO: make a type for this: shape="default|rect|circle|poly"
+shape :: String -> Attribute a
+export shape = AttributeShape
+
+size :: Integer -> Attribute a
+export size = AttributeSize
+
+// TODO: see if we should make this a List Size or something
+sizes :: String -> Attribute a
+export sizes = AttributeSizes
+
+spanAttr :: Integer -> Attribute a
+export spanAttr = AttributeSpan
+
+spellcheck :: Boolean -> Attribute a
+export spellcheck = (truthy) => truthy
+  ? AttributeSpellCheck("true")
+  : AttributeSpellCheck("false")
+
+src :: String -> Attribute a
+export src = AttributeSrc
+
+srcdoc :: String -> Attribute a
+export srcdoc = AttributeSrcDoc
+
+srclang :: String -> Attribute a
+export srclang = AttributeSrcLang
+
+srcset :: String -> Attribute a
+export srcset = AttributeSrcSet
+
+start :: Integer -> Attribute a
+export start = AttributeStart
+
+step :: Integer -> Attribute a
+export step = AttributeStep
+
+style :: Dictionary String String -> Attribute a
+export style = AttributeStyle
+
+tabindex :: Integer -> Attribute a
+export tabindex = AttributeTabIndex
+
+target :: String -> Attribute a
+export target = AttributeTarget
+
+titleAttr :: String -> Attribute a
+export titleAttr = AttributeTitle
+
+to :: String -> Attribute a
+export to = AttributeTo
+
+translate :: Boolean -> Attribute a
+export translate = (yes) => yes
+  ? AttributeTranslate("yes")
+  : AttributeTranslate("no")
+
+usemap :: String -> Attribute a
+export usemap = AttributeUseMap
+
+value :: String -> Attribute a
+export value = AttributeValue
+
+width :: Integer -> Attribute a
+export width = AttributeWidth
+
+// wrap="soft|hard"
+wrap :: String -> Attribute a
+export wrap = AttributeWrap
