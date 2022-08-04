@@ -18,7 +18,8 @@ const getAttributeTuple = attr =>
 
 
 const PROP_NAMES = [
-  "value"
+  "value",
+  "innerhtml",
 ]
 
 
@@ -37,7 +38,8 @@ const objectifyAttrs = (env, attrs) => reduce(obj => attr => {
   } else if (attrName === "key") {
     return { ...obj, key: attrValue }
   } else if (PROP_NAMES.includes(attrName)) {
-    return { ...obj, props: { ...obj.props, [attrName]: attrValue }}
+    console.log(attrName)
+    return { ...obj, props: { ...obj.props, [attrName === "innerhtml" ? "innerHTML" : attrName]: attrValue }}
   } else if (attrName.substr(0, 2) === "on") {
     const eventName = attrName.substr(2)
     const ctor = EventConstructors[eventName]
