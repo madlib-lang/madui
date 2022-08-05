@@ -175,6 +175,7 @@ import {
   hreflang,
   id,
   innerHTML,
+  innerText,
   inputType,
   ismap,
   key,
@@ -669,6 +670,7 @@ export href
 export hreflang
 export id
 export innerHTML
+export innerText
 export inputType
 export ismap
 export key
