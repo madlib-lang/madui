@@ -19,7 +19,7 @@ export type Event
   | MouseEvent(BaseEvent)
   | InputEvent({
       ...BaseEvent,
-      target :: { value :: String },
+      target :: { value :: String, innerText :: String },
       data :: String,
       inputType :: String, // Make an InputType type for it
     })

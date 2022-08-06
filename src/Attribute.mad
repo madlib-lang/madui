@@ -60,6 +60,8 @@ export type Attribute a
   | AttributeHref(String)
   | AttributeHrefLang(String)
   | AttributeId(String)
+  | AttributeInnerHTML(String)
+  | AttributeInnerText(String)
   | AttributeIsMap(Boolean)
   | AttributeKey(String)
   | AttributeKind(String)
@@ -296,6 +298,12 @@ export hreflang = AttributeHrefLang
 
 id :: String -> Attribute a
 export id = AttributeId
+
+innerHTML :: String -> Attribute a
+export innerHTML = AttributeInnerHTML
+
+innerText :: String -> Attribute a
+export innerText = AttributeInnerText
 
 inputType :: String -> Attribute a
 export inputType = AttributeType
