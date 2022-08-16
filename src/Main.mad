@@ -1,5 +1,5 @@
 import {} from "Number"
-import type { Config } from "@/Config"
+import type { Config, RoutingKind } from "@/Config"
 import type { Key } from "@/Key"
 import type { Element } from "@/Element"
 import type { Attribute } from "@/Attribute"
@@ -13,7 +13,7 @@ import {
   getUrl
 } from "@/Core"
 
-import { DEFAULT_CONFIG, addGlobalEventHandler, addSubscription } from "@/Config"
+import { DEFAULT_CONFIG, HashRouting, BasicRouting, addGlobalEventHandler, addSubscription } from "@/Config"
 
 import { every } from "@/Subscription"
 
@@ -132,7 +132,9 @@ import {
   wbr,
   empty,
   link,
-  text
+  text,
+  forRoute,
+  switchRoute
 } from "@/Element"
 
 import {
@@ -502,6 +504,7 @@ import {
 
 export type Element
 export type Config
+export type RoutingKind
 export type Attribute
 export type Action
 export type GlobalAction
@@ -627,6 +630,8 @@ export wbr
 export empty
 export link
 export text
+export forRoute
+export switchRoute
 
 
 // Attributes
@@ -809,6 +814,8 @@ export getUrl
 // Config
 
 export DEFAULT_CONFIG
+export HashRouting
+export BasicRouting
 export addGlobalEventHandler
 export addSubscription
 

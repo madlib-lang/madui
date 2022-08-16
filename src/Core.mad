@@ -3,6 +3,7 @@ import {} from "Number"
 
 import type { Config } from "@/Config"
 import type { Element } from "@/Element"
+import { DEFAULT_CONFIG } from "@/Config"
 
 import { runAction, wrapEventHandler } from "@/CoreUtils"
 import { EventConstructors } from "@/Event"
@@ -19,37 +20,10 @@ import {
 
 
 
-getUrl :: {} -> String
-export getUrl = (_) => #- document.location.hash.substr(1) || "/" -#
+getUrl :: a -> String
+export getUrl = () => #- document.location.href || "" -#
 
 
-
-/**
- * render - boostraps the app and takes a component, and an initial state as parameters
- */
-render :: (a -> Element a) -> a -> String -> {}
-export render = (view, initialState, containerId) => {
-  #-
-  window.env = {
-    patch: null,
-    currentElement: null,
-    currentState: null,
-    rootView: null,
-  }
-  -#
-  initialElement = view(initialState)
-  #-
-  const patch = init([attributesModule, propsModule, eventListenersModule, styleModule])
-  patch(document.getElementById(containerId), initialElement)
-
-  window.env.patch = patch
-  window.env.currentElement = initialElement
-  window.env.rootView = view
-  window.env.currentState = initialState
-  -#
-
-  return {}
-}
 
 #-
 const startGlobalEventHandlers = (env, globalActions) => {
@@ -75,11 +49,29 @@ const startGlobalEventHandlers = (env, globalActions) => {
 
 renderWithConfig :: Config a -> (a -> Element a) -> a -> String -> {}
 export renderWithConfig = (config, view, initialState, containerId) => {
-  render(view, initialState, containerId)
-
   #-
+  window.env = {
+    routingKind: config.routingKind.__constructor,
+    patch: null,
+    currentElement: null,
+    currentState: null,
+    rootView: null,
+  }
+  -#
+  initialElement = view(initialState)
+  #-
+  const patch = init([attributesModule, propsModule, eventListenersModule, styleModule])
+  patch(document.getElementById(containerId), initialElement)
+
+  window.env.patch = patch
+  window.env.currentElement = initialElement
+  window.env.rootView = view
+  window.env.currentState = initialState
+
   const env = window.env
   startGlobalEventHandlers(env, config.globalEventHandlers)
+  // needed to make the router work
+  window.addEventListener("popstate", () => { runAction(env)(x => x) })
 
   let subs = config.subscriptions
   while (subs !== null) {
@@ -90,3 +82,9 @@ export renderWithConfig = (config, view, initialState, containerId) => {
 
   return {}
 }
+
+/**
+ * render - boostraps the app and takes a component, and an initial state as parameters
+ */
+ render :: (a -> Element a) -> a -> String -> {}
+ export render = renderWithConfig(DEFAULT_CONFIG)

@@ -8,8 +8,15 @@ import { reduce } from "List"
 import { wrapEventHandler } from "@/CoreUtils"
 import { EventConstructors } from "@/Event"
 
+import { fromList } from "Dictionary"
+
 
 export type Element a = Element
+
+alias RouteInfo = {
+  urlParams :: Dictionary String String,
+  searchParams :: Dictionary String String,
+}
 
 
 #-
@@ -56,23 +63,12 @@ const objectifyAttrs = (env, attrs) => reduce(obj => attr => {
     return { ...obj, attrs: { ...obj.attrs, [attrName]: attrValue }}
   }
 })({})(attrs)
-
-
-const arrayifyChildren = (madlistChildren) => {
-  let jsChildren = []
-  while (madlistChildren !== null) {
-    jsChildren.push(madlistChildren.v)
-    madlistChildren = madlistChildren.n
-  }
-
-  return jsChildren
-}
 -#
 
 
 tag :: String -> List (Attribute a) -> List (Element a) -> Element a
 export tag = (tagName, attrs, children) => #- {
-  return h(tagName, objectifyAttrs(window.env, attrs), arrayifyChildren(children))
+  return h(tagName, objectifyAttrs(window.env, attrs), __listToJSArray__(children))
 } -#
 
 
@@ -195,6 +191,30 @@ export text = (t) => #- t -#
 empty :: List (Attribute b) -> List (Element b) -> Element b
 export empty = (attrs, children) => #- null -#
 
+
+#-
+const triggerLink = (e, path) => {
+  e.preventDefault();
+  const url = new URL(window.location)
+  const state = {}
+  let changed = true;
+
+  if (window.env.routingKind === "BasicRouting") {
+    url.pathname = path
+    changed = path !== window.location.pathname
+  } else if (window.env.routingKind === "HashRouting") {
+    url.hash = path
+    changed = path !== window.location.hash
+  }
+
+  if (changed) {
+    history.pushState(state, "", url)
+    var popStateEvent = new PopStateEvent('popstate', { state });
+    dispatchEvent(popStateEvent);
+  }
+}
+-#
+
 link :: List (Attribute b) -> List (Element b) -> Element b
 export link = (attrs, children) => #-{
   const objAttrs = objectifyAttrs(window.env, attrs);
@@ -202,9 +222,120 @@ export link = (attrs, children) => #-{
     if (!objAttrs.attrs) {
       objAttrs.attrs = {}
     }
-    objAttrs.attrs.href = `\#${objAttrs.attrs.to}`
+    if (window.env.routingKind === "HashRouting") {
+      objAttrs.attrs.href = `\#${objAttrs.attrs.to}`
+    } else {
+      objAttrs.attrs.href = `${objAttrs.attrs.to}`
+    }
     delete objAttrs.attrs.to
   }
 
-  return h("a", { ...objAttrs }, arrayifyChildren(children));
+  if (!objAttrs.on) {
+    objAttrs.on = {};
+  }
+
+  if (objAttrs.on.click) {
+    const current = objAttrs.on.click
+    objAttrs.on.click = (e) => {
+      triggerLink(e, objAttrs.attrs.href);
+      current(e)
+    }
+  } else {
+    objAttrs.on.click = (e) => {
+      triggerLink(e, objAttrs.attrs.href);
+    }
+  }
+
+  return h("a", { ...objAttrs }, __listToJSArray__(children));
 }-#
+
+
+fromStringList :: List #[String, String] -> Dictionary String String
+fromStringList = fromList
+
+#-
+const matchRoute = (route) => {
+  let path = window.location.pathname
+  let search = window.location.search.substr(1)
+
+  if (window.env.routingKind === "HashRouting") {
+    const hash = window.location.hash.substr(1)
+    if (!hash) {
+      path = "/"
+      search = ""
+    } else {
+      const [_path, _search] = hash.split("?") || "/"
+      path = _path
+      search = _search || ""
+    }
+  }
+
+  const splitRoute = route.split("/")
+  const splitPath = path.split("/")
+  let urlParams = []
+  let searchParams = []
+  let good = true
+
+  for (let i = 0; i < splitRoute.length && good; i++) {
+    const routePart = splitRoute[i]
+    const pathPart = splitPath[i]
+
+    if (routePart === "*") {
+      break;
+    } else if (routePart.charAt(0) === ":") {
+      if (typeof pathPart !== "undefined" && (splitPath[i + 1] !== undefined && splitRoute[i + 1] !== undefined || splitPath[i + 1] === undefined && splitRoute[i + 1] === undefined)) {
+        urlParams.push([routePart.substr(1), pathPart])
+      } else {
+        good = false
+      }
+    } else {
+      good = pathPart === routePart && (splitPath[i + 1] !== undefined && splitRoute[i + 1] !== undefined || splitPath[i + 1] === undefined && splitRoute[i + 1] === undefined)
+    }
+  }
+
+  if (good) {
+    const vars = search.split("&")
+    vars.forEach((v) => {
+      const [name, value] = v.split("=")
+      searchParams.push([name, value ? value : ""])
+    })
+  }
+
+  return good
+    ? {
+      urlParams: fromStringList(__jsArrayToList__(urlParams)),
+      searchParams: fromStringList(__jsArrayToList__(searchParams)),
+    }
+    : null
+}
+-#
+
+forRoute :: String -> (RouteInfo -> Element a) -> Element a
+export forRoute = (route, enhancedView) => {
+  #-
+  const routeInfo = matchRoute(route)
+  const _match = routeInfo !== null
+  -#
+
+  match = #- _match -#
+  return match ? enhancedView(#- routeInfo -#) : <empty />
+}
+
+
+switchRoute :: List #[String, (RouteInfo -> Element b)] -> Element b
+export switchRoute = (matchers) => where(matchers) {
+  [#[route, enhancedView], ...nextMatchers] => do {
+    #-
+    const routeInfo = matchRoute(route)
+    const _match = routeInfo !== null
+    -#
+
+    match = #- _match -#
+    return match
+      ? enhancedView(#- routeInfo -#)
+      : switchRoute(nextMatchers)
+  }
+
+  [] =>
+    <empty />
+}

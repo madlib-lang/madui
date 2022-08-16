@@ -33,6 +33,7 @@ export type Event
   | PopStateEvent({
       ...BaseEvent,
       url :: String,
+      path :: String,
     })
 
 // https://www.w3schools.com/jsref/obj_keyboardevent.asp
@@ -88,7 +89,12 @@ export buildAbstractEvent = (e) => AbstractEvent({
 })
 
 export buildPopStateEvent = (e) => PopStateEvent({
-  url: #- document.location.hash.substr(1) || "/" -#,
+  url: #- document.location.href -#,
+  path: #-
+    window.env.routingKind === "BasicRouting"
+      ? document.location.pathname
+      : document.location.hash.substr(1) || "/"
+  -#,
   bubbles: e.bubbles,
   defaultPrevented: e.defaultPrevented,
   preventDefault: e.preventDefault,

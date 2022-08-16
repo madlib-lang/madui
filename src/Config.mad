@@ -3,15 +3,22 @@ import { append } from "List"
 import type { GlobalAction } from "@/Action"
 import type { Subscription } from "@/Subscription"
 
+
+export type RoutingKind
+  = HashRouting
+  | BasicRouting
+
 export alias Config a = {
   subscriptions :: List (Subscription a),
   globalEventHandlers :: List (GlobalAction a),
+  routingKind :: RoutingKind,
 }
 
 DEFAULT_CONFIG :: Config a
 export DEFAULT_CONFIG = {
   subscriptions: [],
   globalEventHandlers: [],
+  routingKind: BasicRouting,
 }
 
 addGlobalEventHandler :: GlobalAction a -> Config a -> Config a
