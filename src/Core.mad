@@ -47,6 +47,26 @@ const startGlobalEventHandlers = (env, globalActions) => {
 }
 -#
 
+
+#-
+const hashFixModule = () => {
+  let triggered = false
+  history.scrollRestoration = "manual"
+  return {
+    post: () => {
+      if (!triggered) {
+        const element = document.getElementById(window.location.hash.substr(1))
+        if (element) {
+          const top = element.offsetTop
+          window.scrollTo(0, top)
+        }
+      }
+      triggered = true
+    },
+  }
+}
+-#
+
 renderWithConfig :: Config a -> (a -> Element a) -> a -> String -> {}
 export renderWithConfig = (config, view, initialState, containerId) => {
   #-
@@ -60,7 +80,7 @@ export renderWithConfig = (config, view, initialState, containerId) => {
   -#
   initialElement = view(initialState)
   #-
-  const patch = init([attributesModule, propsModule, eventListenersModule, styleModule])
+  const patch = init([attributesModule, propsModule, eventListenersModule, styleModule, hashFixModule()])
   patch(document.getElementById(containerId), initialElement)
 
   window.env.patch = patch
@@ -68,14 +88,13 @@ export renderWithConfig = (config, view, initialState, containerId) => {
   window.env.rootView = view
   window.env.currentState = initialState
 
-  const env = window.env
-  startGlobalEventHandlers(env, config.globalEventHandlers)
+  startGlobalEventHandlers(window.env, config.globalEventHandlers)
   // needed to make the router work
-  window.addEventListener("popstate", () => { runAction(env)(x => x) })
+  window.addEventListener("popstate", () => { runAction(window.env)(x => x) })
 
   let subs = config.subscriptions
   while (subs !== null) {
-    subs.v(runAction(env))
+    subs.v(runAction(window.env))
     subs = subs.n
   }
   -#

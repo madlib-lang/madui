@@ -200,7 +200,7 @@ const triggerLink = (e, path) => {
   let changed = true;
 
   if (window.env.routingKind === "BasicRouting") {
-    url.pathname = path
+    url.href = url.origin + path
     changed = path !== window.location.pathname
   } else if (window.env.routingKind === "HashRouting") {
     url.hash = path
