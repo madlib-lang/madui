@@ -1,5 +1,5 @@
 {
-  "buildHash": "7c8b68038184d1f3b73189ce83e5c5d2",
+  "buildHash": "db2858f37b929be2e66a5fca509ad022",
   "jsApi": {
     "apiInstances": [],
     "apiAliases": {},
@@ -7,6 +7,7 @@
     "apiNames": {
       "KEY_6": "Key",
       "tfoot": "List (Attribute a) -> List (Element a) -> Element a",
+      "getPathName": "a -> String",
       "progress": "List (Attribute a) -> List (Element a) -> Element a",
       "KEY_F24": "Key",
       "KEY_V": "Key",
@@ -489,6 +490,7 @@
     "apiNames": {
       "KEY_6": "Key",
       "tfoot": "List (Attribute a) -> List (Element a) -> Element a",
+      "getPathName": "a -> String",
       "progress": "List (Attribute a) -> List (Element a) -> Element a",
       "KEY_F24": "Key",
       "KEY_V": "Key",
@@ -964,5 +966,5 @@
     },
     "apiTypes": {}
   },
-  "versionHash": "19bbdecfa6ce3c33e1aa42dc000a8eb4"
+  "versionHash": "06ed58a0080308e1635633c2fd9a56a3"
 }

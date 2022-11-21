@@ -10,6 +10,7 @@ import type { Subscription } from "@/Subscription"
 import {
   render,
   renderWithConfig,
+  getPathName,
   getUrl
 } from "@/Core"
 
@@ -809,6 +810,7 @@ export onOnline
 export onResize
 export onUnload
 export onUrlChanged
+export getPathName
 export getUrl
 
 // Config

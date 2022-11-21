@@ -24,6 +24,10 @@ getUrl :: a -> String
 export getUrl = () => #- document.location.href || "" -#
 
 
+getPathName :: a -> String
+export getPathName = () => #- document.location.pathname || "" -#
+
+
 
 #-
 const startGlobalEventHandlers = (env, globalActions) => {
