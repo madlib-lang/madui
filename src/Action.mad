@@ -15,6 +15,20 @@ export syncAction = (stateUpdate) => (
   (_, event) => [of((state) => stateUpdate(state, event))]
 )
 
+throttleAction :: Integer -> Action a -> Action a
+export throttleAction = (amount, action) => {
+  #- let timestamp = new Date().getTime() -#
+  return (state, event) => #-{
+    const currentTime = new Date().getTime()
+    if (timestamp + amount > currentTime) {
+      return null;
+    }
+
+    timestamp = currentTime
+    return action(state)(event)
+  }-#
+}
+
 onAfterPrint :: Action a -> GlobalAction a
 export onAfterPrint = GlobalAction("afterprint")
 

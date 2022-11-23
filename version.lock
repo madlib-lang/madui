@@ -1,5 +1,5 @@
 {
-  "buildHash": "db2858f37b929be2e66a5fca509ad022",
+  "buildHash": "ad95a96ff35a8c46b6bb22d53ae3e2fc",
   "jsApi": {
     "apiInstances": [],
     "apiAliases": {},
@@ -119,6 +119,7 @@
       "fieldset": "List (Attribute a) -> List (Element a) -> Element a",
       "KEY_SLEEP": "Key",
       "shadow": "List (Attribute a) -> List (Element a) -> Element a",
+      "throttleAction": "Integer -> (a -> Event -> List (Wish (a -> a) (a -> a))) -> a -> Event -> List (Wish (a -> a) (a -> a))",
       "KEY_K": "Key",
       "plaintext": "List (Attribute a) -> List (Element a) -> Element a",
       "KEY_F12": "Key",
@@ -337,7 +338,7 @@
       "KEY_PERIOD": "Key",
       "KEY_TILDE": "Key",
       "onSearch": "(a -> Event -> List (Wish (a -> a) (a -> a))) -> Attribute a",
-      "MouseEvent": "{ bubbles :: Boolean, defaultPrevented :: Boolean, eventType :: String, preventDefault :: {} -> {}, stopImmediatePropagation :: {} -> {}, stopPropagation :: {} -> {}, timeStamp :: Integer } -> Event",
+      "MouseEvent": "{ bubbles :: Boolean, clientX :: Integer, clientY :: Integer, defaultPrevented :: Boolean, eventType :: String, preventDefault :: {} -> {}, stopImmediatePropagation :: {} -> {}, stopPropagation :: {} -> {}, timeStamp :: Integer } -> Event",
       "main": "List (Attribute a) -> List (Element a) -> Element a",
       "addSubscription": "(((a -> a) -> {}) -> {}) -> { globalEventHandlers :: List (GlobalAction a), routingKind :: RoutingKind, subscriptions :: List (((a -> a) -> {}) -> {}) } -> { globalEventHandlers :: List (GlobalAction a), routingKind :: RoutingKind, subscriptions :: List (((a -> a) -> {}) -> {}) }",
       "onOffline": "(a -> Event -> List (Wish (a -> a) (a -> a))) -> GlobalAction a",
@@ -602,6 +603,7 @@
       "fieldset": "List (Attribute a) -> List (Element a) -> Element a",
       "KEY_SLEEP": "Key",
       "shadow": "List (Attribute a) -> List (Element a) -> Element a",
+      "throttleAction": "Integer -> (a -> Event -> List (Wish (a -> a) (a -> a))) -> a -> Event -> List (Wish (a -> a) (a -> a))",
       "KEY_K": "Key",
       "plaintext": "List (Attribute a) -> List (Element a) -> Element a",
       "KEY_F12": "Key",
@@ -820,7 +822,7 @@
       "KEY_PERIOD": "Key",
       "KEY_TILDE": "Key",
       "onSearch": "(a -> Event -> List (Wish (a -> a) (a -> a))) -> Attribute a",
-      "MouseEvent": "{ bubbles :: Boolean, defaultPrevented :: Boolean, eventType :: String, preventDefault :: {} -> {}, stopImmediatePropagation :: {} -> {}, stopPropagation :: {} -> {}, timeStamp :: Integer } -> Event",
+      "MouseEvent": "{ bubbles :: Boolean, clientX :: Integer, clientY :: Integer, defaultPrevented :: Boolean, eventType :: String, preventDefault :: {} -> {}, stopImmediatePropagation :: {} -> {}, stopPropagation :: {} -> {}, timeStamp :: Integer } -> Event",
       "main": "List (Attribute a) -> List (Element a) -> Element a",
       "addSubscription": "(((a -> a) -> {}) -> {}) -> { globalEventHandlers :: List (GlobalAction a), routingKind :: RoutingKind, subscriptions :: List (((a -> a) -> {}) -> {}) } -> { globalEventHandlers :: List (GlobalAction a), routingKind :: RoutingKind, subscriptions :: List (((a -> a) -> {}) -> {}) }",
       "onOffline": "(a -> Event -> List (Wish (a -> a) (a -> a))) -> GlobalAction a",
@@ -966,5 +968,5 @@
     },
     "apiTypes": {}
   },
-  "versionHash": "06ed58a0080308e1635633c2fd9a56a3"
+  "versionHash": "0e5604f912273ef185ac02e47b9a1bbb"
 }

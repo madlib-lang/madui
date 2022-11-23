@@ -264,7 +264,9 @@ download :: Boolean -> Attribute a
 export download = AttributeDownload
 
 draggable :: Boolean -> Attribute a
-export draggable = AttributeDraggable
+export draggable = (canDrag) => canDrag
+  ? StringAttribute(#["draggable", "true"])
+  : StringAttribute(#["draggable", "false"])
 
 enctype :: String -> Attribute a
 export enctype = AttributeEncType

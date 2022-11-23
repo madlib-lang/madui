@@ -211,6 +211,7 @@ const triggerLink = (e, path) => {
     history.pushState(state, "", url)
     var popStateEvent = new PopStateEvent('popstate', { state });
     dispatchEvent(popStateEvent);
+    window.scrollTo(0, 0);
   }
 }
 -#

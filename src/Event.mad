@@ -16,7 +16,7 @@ alias BaseEvent = {
 
 export type Event
   = AbstractEvent(BaseEvent)
-  | MouseEvent(BaseEvent)
+  | MouseEvent({ ...BaseEvent, clientX :: Integer, clientY :: Integer })
   | InputEvent({
       ...BaseEvent,
       target :: { value :: String, innerText :: String },
@@ -76,6 +76,8 @@ export buildMouseEvent = (e) => MouseEvent({
   stopPropagation: e.stopPropagation,
   timeStamp: e.timeStamp,
   eventType: e.eventType,
+  clientX: e.clientX,
+  clientY: e.clientY,
 })
 
 export buildAbstractEvent = (e) => AbstractEvent({
@@ -120,13 +122,13 @@ export EventConstructors = #- Object.freeze({
   cuechange: buildAbstractEvent,
   cut: buildAbstractEvent,
   dblclick: buildMouseEvent,
-  drag: buildAbstractEvent,
-  dragend: buildAbstractEvent,
-  dragenter: buildAbstractEvent,
-  dragleave: buildAbstractEvent,
-  dragover: buildAbstractEvent,
-  dragstart: buildAbstractEvent,
-  drop: buildAbstractEvent,
+  drag: buildMouseEvent,
+  dragend: buildMouseEvent,
+  dragenter: buildMouseEvent,
+  dragleave: buildMouseEvent,
+  dragover: buildMouseEvent,
+  dragstart: buildMouseEvent,
+  drop: buildMouseEvent,
   durationchange: buildAbstractEvent,
   emptied: buildAbstractEvent,
   ended: buildAbstractEvent,

@@ -309,6 +309,7 @@ import {
 
 import {
   syncAction,
+  throttleAction,
   onAfterPrint,
   onBeforePrint,
   onBeforeUnload,
@@ -799,6 +800,7 @@ export wrap
 // Actions
 
 export syncAction
+export throttleAction
 export onAfterPrint
 export onBeforePrint
 export onBeforeUnload
