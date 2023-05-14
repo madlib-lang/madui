@@ -1,5 +1,5 @@
 {
-  "buildHash": "ad95a96ff35a8c46b6bb22d53ae3e2fc",
+  "buildHash": "4537a041405f73ef43ef20a07db39902",
   "jsApi": {
     "apiInstances": [],
     "apiAliases": {},
@@ -323,6 +323,7 @@
       "KEY_F13": "Key",
       "scope": "String -> Attribute a",
       "poster": "String -> Attribute a",
+      "altAttribute": "String -> Attribute a",
       "KeyboardEvent": "{ altKey :: Boolean, bubbles :: Boolean, ctrlKey :: Boolean, defaultPrevented :: Boolean, eventType :: String, key :: Key, preventDefault :: {} -> {}, shiftKey :: Boolean, stopImmediatePropagation :: {} -> {}, stopPropagation :: {} -> {}, timeStamp :: Integer } -> Event",
       "dl": "List (Attribute a) -> List (Element a) -> Element a",
       "KEY_COMMA": "Key",
@@ -362,7 +363,6 @@
       "KEY_NUMPAD_0": "Key",
       "multiple": "Boolean -> Attribute a",
       "KEY_F29": "Key",
-      "alt": "String -> Attribute a",
       "KEY_F5": "Key",
       "KEY_PAUSE": "Key",
       "dfn": "List (Attribute a) -> List (Element a) -> Element a",
@@ -807,6 +807,7 @@
       "KEY_F13": "Key",
       "scope": "String -> Attribute a",
       "poster": "String -> Attribute a",
+      "altAttribute": "String -> Attribute a",
       "KeyboardEvent": "{ altKey :: Boolean, bubbles :: Boolean, ctrlKey :: Boolean, defaultPrevented :: Boolean, eventType :: String, key :: Key, preventDefault :: {} -> {}, shiftKey :: Boolean, stopImmediatePropagation :: {} -> {}, stopPropagation :: {} -> {}, timeStamp :: Integer } -> Event",
       "dl": "List (Attribute a) -> List (Element a) -> Element a",
       "KEY_COMMA": "Key",
@@ -846,7 +847,6 @@
       "KEY_NUMPAD_0": "Key",
       "multiple": "Boolean -> Attribute a",
       "KEY_F29": "Key",
-      "alt": "String -> Attribute a",
       "KEY_F5": "Key",
       "KEY_PAUSE": "Key",
       "dfn": "List (Attribute a) -> List (Element a) -> Element a",
@@ -968,5 +968,5 @@
     },
     "apiTypes": {}
   },
-  "versionHash": "0e5604f912273ef185ac02e47b9a1bbb"
+  "versionHash": "d149f1ad15929c0de71efb09318ac483"
 }

@@ -198,8 +198,8 @@ export accessKey = AttributeAccessKey
 action :: String -> Attribute a
 export action = AttributeAction
 
-alt :: String -> Attribute a
-export alt = AttributeAlt
+altAttribute :: String -> Attribute a
+export altAttribute = AttributeAlt
 
 async :: Boolean -> Attribute a
 export async = AttributeAsync

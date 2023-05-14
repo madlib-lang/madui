@@ -9,16 +9,18 @@ export runAction = #- env => updater => {
 } -#
 
 
-export wrapEventHandler = #- (env, ctor, handler) => {
+_wrapEventHandler = (_fulfill, _runAction) => #- (env, ctor, handler) => {
   return event => {
     event.eventType = event.type
+
     // Calling an event handler gives us a list of wishes
     let wishes = handler(env.currentState)(ctor(event))
 
     while (wishes !== null) {
-      fulfill(runAction(env))(runAction(env))(wishes.v)
+      _fulfill(_runAction(env))(_runAction(env))(wishes.v)
       wishes = wishes.n
     }
   }
-}
--#
+} -#
+
+export wrapEventHandler = _wrapEventHandler(fulfill, runAction)

@@ -144,7 +144,7 @@ import {
   acceptCharset,
   accessKey,
   action,
-  alt,
+  altAttribute,
   async,
   autocomplete,
   autofocus,
@@ -643,7 +643,7 @@ export accept
 export acceptCharset
 export accessKey
 export action
-export alt
+export altAttribute
 export async
 export autocomplete
 export autofocus

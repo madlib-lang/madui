@@ -10,11 +10,11 @@ import { EventConstructors } from "@/Event"
 
 #-
 import {
-  attributesModule,
-  init,
-  propsModule,
-  eventListenersModule,
-  styleModule
+  attributesModule as madui_attributesModule,
+  init as madui_init,
+  propsModule as madui_propsModule,
+  eventListenersModule as madui_eventListenersModule,
+  styleModule as madui_styleModule
 } from "snabbdom"
 -#
 
@@ -71,8 +71,8 @@ const hashFixModule = () => {
 }
 -#
 
-renderWithConfig :: Config a -> (a -> Element a) -> a -> String -> {}
-export renderWithConfig = (config, view, initialState, containerId) => {
+_renderWithConfig :: w -> Config a -> (a -> Element a) -> a -> String -> {}
+export _renderWithConfig = (_runAction, config, view, initialState, containerId) => {
   #-
   window.env = {
     routingKind: config.routingKind.__constructor,
@@ -84,7 +84,7 @@ export renderWithConfig = (config, view, initialState, containerId) => {
   -#
   initialElement = view(initialState)
   #-
-  const patch = init([attributesModule, propsModule, eventListenersModule, styleModule, hashFixModule()])
+  const patch = madui_init([madui_attributesModule, madui_propsModule, madui_eventListenersModule, madui_styleModule, hashFixModule()])
   patch(document.getElementById(containerId), initialElement)
 
   window.env.patch = patch
@@ -94,17 +94,20 @@ export renderWithConfig = (config, view, initialState, containerId) => {
 
   startGlobalEventHandlers(window.env, config.globalEventHandlers)
   // needed to make the router work
-  window.addEventListener("popstate", () => { runAction(window.env)(x => x) })
+  window.addEventListener("popstate", () => { _runAction(window.env)(x => x) })
 
   let subs = config.subscriptions
   while (subs !== null) {
-    subs.v(runAction(window.env))
+    subs.v(_runAction(window.env))
     subs = subs.n
   }
   -#
 
   return {}
 }
+
+renderWithConfig :: Config a -> (a -> Element a) -> a -> String -> {}
+export renderWithConfig = _renderWithConfig(runAction)
 
 /**
  * render - boostraps the app and takes a component, and an initial state as parameters

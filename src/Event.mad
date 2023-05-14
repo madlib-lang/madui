@@ -4,6 +4,7 @@ import { getKeyFromCode } from "@/Key"
 
 // https://www.w3schools.com/tags/ref_eventattributes.asp
 
+
 alias BaseEvent = {
   bubbles :: Boolean,
   defaultPrevented :: Boolean,
@@ -13,6 +14,7 @@ alias BaseEvent = {
   timeStamp :: Integer,
   eventType :: String,
 }
+
 
 export type Event
   = AbstractEvent(BaseEvent)
@@ -36,6 +38,7 @@ export type Event
       path :: String,
     })
 
+
 // https://www.w3schools.com/jsref/obj_keyboardevent.asp
 export buildKeyboardEvent = (e) => {
   k = getKeyFromCode(e.keyCode)
@@ -55,6 +58,7 @@ export buildKeyboardEvent = (e) => {
   })
 }
 
+
 export buildInputEvent = (e) => InputEvent({
   bubbles: e.bubbles,
   defaultPrevented: e.defaultPrevented,
@@ -68,7 +72,14 @@ export buildInputEvent = (e) => InputEvent({
   inputType: e.inputType,
 })
 
-export buildMouseEvent = (e) => MouseEvent({
+
+addDataTransfer :: a -> b -> a
+addDataTransfer = (event, e) => #-{
+  return { ...event, dataTransfer: e.dataTransfer }
+}-#
+
+
+export buildMouseEvent = (e) => MouseEvent(addDataTransfer({
   bubbles: e.bubbles,
   defaultPrevented: e.defaultPrevented,
   preventDefault: e.preventDefault,
@@ -78,7 +89,8 @@ export buildMouseEvent = (e) => MouseEvent({
   eventType: e.eventType,
   clientX: e.clientX,
   clientY: e.clientY,
-})
+})(e))
+
 
 export buildAbstractEvent = (e) => AbstractEvent({
   bubbles: e.bubbles,
@@ -89,6 +101,7 @@ export buildAbstractEvent = (e) => AbstractEvent({
   timeStamp: e.timeStamp,
   eventType: e.eventType,
 })
+
 
 export buildPopStateEvent = (e) => PopStateEvent({
   url: #- document.location.href -#,
@@ -107,7 +120,7 @@ export buildPopStateEvent = (e) => PopStateEvent({
 })
 
 
-export EventConstructors = #- Object.freeze({
+export EventConstructors = {
   abort: buildAbstractEvent,
   afterprint: buildAbstractEvent,
   beforeprint: buildAbstractEvent,
@@ -183,5 +196,4 @@ export EventConstructors = #- Object.freeze({
   volumechange: buildAbstractEvent,
   waiting: buildAbstractEvent,
   wheel: buildAbstractEvent,
-})
--#
+}
