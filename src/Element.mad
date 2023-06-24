@@ -36,8 +36,6 @@ _objectifyAttrs = (_reduce, _wrapEventHandler, _EventConstructors) => #- {
   return (env, attrs) => _reduce(obj => attr => {
     const [attrName, attrValue] = __getAttributeTuple(attr)
 
-    console.log(attrs)
-
     if (attr.__constructor == "AttributeStyle") {
       const items = attr.__args[0].__args[0]
       const styleObj = _reduce(obj => ([key, value]) => ({
