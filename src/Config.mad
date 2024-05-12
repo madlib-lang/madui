@@ -1,34 +1,27 @@
-import { append } from "List"
-
 import type { GlobalAction } from "@/Action"
 import type { Subscription } from "@/Subscription"
 
+import { append } from "List"
 
-export type RoutingKind
-  = HashRouting
-  | BasicRouting
+
+
+export type RoutingKind = HashRouting | BasicRouting
 
 export alias Config a = {
-  subscriptions :: List (Subscription a),
   globalEventHandlers :: List (GlobalAction a),
   routingKind :: RoutingKind,
+  subscriptions :: List (Subscription a),
 }
 
 DEFAULT_CONFIG :: Config a
-export DEFAULT_CONFIG = {
-  subscriptions: [],
-  globalEventHandlers: [],
-  routingKind: BasicRouting,
-}
+export DEFAULT_CONFIG = { subscriptions: [], globalEventHandlers: [], routingKind: BasicRouting }
 
 addGlobalEventHandler :: GlobalAction a -> Config a -> Config a
-export addGlobalEventHandler = (action, config) => ({
-  ...config,
-  globalEventHandlers: append(action, config.globalEventHandlers)
-})
+export addGlobalEventHandler = (action, config) => (
+  { ...config, globalEventHandlers: append(action, config.globalEventHandlers) }
+)
 
 addSubscription :: Subscription a -> Config a -> Config a
-export addSubscription = (action, config) => ({
-  ...config,
-  subscriptions: append(action, config.subscriptions)
-})
+export addSubscription = (action, config) => (
+  { ...config, subscriptions: append(action, config.subscriptions) }
+)

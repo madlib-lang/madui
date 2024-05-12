@@ -1,18 +1,9 @@
 import type { Method } from "Http"
 
-import {
-  GET,
-  POST,
-  PUT,
-  DELETE,
-  PATCH,
-  HEAD,
-  OPTIONS,
-  CONNECT,
-  TRACE
-} from "Http"
-
 import type { Action } from "@/Action"
+
+import { CONNECT, DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT, TRACE } from "Http"
+
 
 
 // TODO: Check what to do with body attributes like
@@ -205,9 +196,7 @@ async :: Boolean -> Attribute a
 export async = AttributeAsync
 
 autocomplete :: Boolean -> Attribute a
-export autocomplete = (on) => on
-  ? AttributeAutoComplete("on")
-  : AttributeAutoComplete("off")
+export autocomplete = (on) => on ? AttributeAutoComplete("on") : AttributeAutoComplete("off")
 
 autofocus :: Boolean -> Attribute a
 export autofocus = AttributeAutoFocus
@@ -390,79 +379,79 @@ export name = AttributeName
 novalidate :: Boolean -> Attribute a
 export novalidate = AttributeNoValidate
 
-onAbort :: (Action a) -> Attribute a
+onAbort :: Action a -> Attribute a
 export onAbort = AttributeOnAbort
 
-onBlur :: (Action a) -> Attribute a
+onBlur :: Action a -> Attribute a
 export onBlur = AttributeOnBlur
 
-onCanPlay :: (Action a) -> Attribute a
+onCanPlay :: Action a -> Attribute a
 export onCanPlay = AttributeOnCanPlay
 
-onCanPlayThrough :: (Action a) -> Attribute a
+onCanPlayThrough :: Action a -> Attribute a
 export onCanPlayThrough = AttributeOnCanPlayThrough
 
-onChange :: (Action a) -> Attribute a
+onChange :: Action a -> Attribute a
 export onChange = AttributeOnChange
 
-onClick :: (Action a) -> Attribute a
+onClick :: Action a -> Attribute a
 export onClick = AttributeOnClick
 
-onContextMenu :: (Action a) -> Attribute a
+onContextMenu :: Action a -> Attribute a
 export onContextMenu = AttributeOnContextMenu
 
-onCopy :: (Action a) -> Attribute a
+onCopy :: Action a -> Attribute a
 export onCopy = AttributeOnCopy
 
-onCueChange :: (Action a) -> Attribute a
+onCueChange :: Action a -> Attribute a
 export onCueChange = AttributeOnCueChange
 
-onCut :: (Action a) -> Attribute a
+onCut :: Action a -> Attribute a
 export onCut = AttributeOnCut
 
-onDblClick :: (Action a) -> Attribute a
+onDblClick :: Action a -> Attribute a
 export onDblClick = AttributeOnDblClick
 
-onDrag :: (Action a) -> Attribute a
+onDrag :: Action a -> Attribute a
 export onDrag = AttributeOnDrag
 
-onDragEnd :: (Action a) -> Attribute a
+onDragEnd :: Action a -> Attribute a
 export onDragEnd = AttributeOnDragEnd
 
-onDragEnter :: (Action a) -> Attribute a
+onDragEnter :: Action a -> Attribute a
 export onDragEnter = AttributeOnDragEnter
 
-onDragLeave :: (Action a) -> Attribute a
+onDragLeave :: Action a -> Attribute a
 export onDragLeave = AttributeOnDragLeave
 
-onDragOver :: (Action a) -> Attribute a
+onDragOver :: Action a -> Attribute a
 export onDragOver = AttributeOnDragOver
 
-onDragStart :: (Action a) -> Attribute a
+onDragStart :: Action a -> Attribute a
 export onDragStart = AttributeOnDragStart
 
-onDrop :: (Action a) -> Attribute a
+onDrop :: Action a -> Attribute a
 export onDrop = AttributeOnDrop
 
-onDurationChange :: (Action a) -> Attribute a
+onDurationChange :: Action a -> Attribute a
 export onDurationChange = AttributeOnDurationChange
 
-onEmptied :: (Action a) -> Attribute a
+onEmptied :: Action a -> Attribute a
 export onEmptied = AttributeOnEmptied
 
-onEnded :: (Action a) -> Attribute a
+onEnded :: Action a -> Attribute a
 export onEnded = AttributeOnEnded
 
-onError :: (Action a) -> Attribute a
+onError :: Action a -> Attribute a
 export onError = AttributeOnError
 
-onFocus :: (Action a) -> Attribute a
+onFocus :: Action a -> Attribute a
 export onFocus = AttributeOnFocus
 
-onInput :: (Action a) -> Attribute a
+onInput :: Action a -> Attribute a
 export onInput = AttributeOnInput
 
-onInvalid :: (Action a) -> Attribute a
+onInvalid :: Action a -> Attribute a
 export onInvalid = AttributeOnInvalid
 
 onKeyPress :: Action a -> Attribute a
@@ -486,79 +475,79 @@ export onLoadedMetaData = AttributeOnLoadedMetaData
 onLoadStart :: Action a -> Attribute a
 export onLoadStart = AttributeOnLoadStart
 
-onMouseDown :: (Action a) -> Attribute a
+onMouseDown :: Action a -> Attribute a
 export onMouseDown = AttributeOnMouseDown
 
-onMouseEnter :: (Action a) -> Attribute a
+onMouseEnter :: Action a -> Attribute a
 export onMouseEnter = AttributeOnMouseEnter
 
-onMouseLeave :: (Action a) -> Attribute a
+onMouseLeave :: Action a -> Attribute a
 export onMouseLeave = AttributeOnMouseLeave
 
-onMouseMove :: (Action a) -> Attribute a
+onMouseMove :: Action a -> Attribute a
 export onMouseMove = AttributeOnMouseMove
 
-onMouseOut :: (Action a) -> Attribute a
+onMouseOut :: Action a -> Attribute a
 export onMouseOut = AttributeOnMouseOut
 
-onMouseOver :: (Action a) -> Attribute a
+onMouseOver :: Action a -> Attribute a
 export onMouseOver = AttributeOnMouseOver
 
-onMouseUp :: (Action a) -> Attribute a
+onMouseUp :: Action a -> Attribute a
 export onMouseUp = AttributeOnMouseUp
 
-onMouseWheel :: (Action a) -> Attribute a
+onMouseWheel :: Action a -> Attribute a
 export onMouseWheel = AttributeOnMouseWheel
 
-onPaste :: (Action a) -> Attribute a
+onPaste :: Action a -> Attribute a
 export onPaste = AttributeOnPaste
 
-onPause :: (Action a) -> Attribute a
+onPause :: Action a -> Attribute a
 export onPause = AttributeOnPause
 
-onPlay :: (Action a) -> Attribute a
+onPlay :: Action a -> Attribute a
 export onPlay = AttributeOnPlay
 
-onPlaying :: (Action a) -> Attribute a
+onPlaying :: Action a -> Attribute a
 export onPlaying = AttributeOnPlaying
 
-onProgress :: (Action a) -> Attribute a
+onProgress :: Action a -> Attribute a
 export onProgress = AttributeOnProgress
 
-onRateChange :: (Action a) -> Attribute a
+onRateChange :: Action a -> Attribute a
 export onRateChange = AttributeOnRateChange
 
-onReset :: (Action a) -> Attribute a
+onReset :: Action a -> Attribute a
 export onReset = AttributeOnReset
 
-onScroll :: (Action a) -> Attribute a
+onScroll :: Action a -> Attribute a
 export onScroll = AttributeOnScroll
 
-onSearch :: (Action a) -> Attribute a
+onSearch :: Action a -> Attribute a
 export onSearch = AttributeOnSearch
 
-onSeeked :: (Action a) -> Attribute a
+onSeeked :: Action a -> Attribute a
 export onSeeked = AttributeOnSeeked
 
-onSeeking :: (Action a) -> Attribute a
+onSeeking :: Action a -> Attribute a
 export onSeeking = AttributeOnSeeking
 
-onSelect :: (Action a) -> Attribute a
+onSelect :: Action a -> Attribute a
 export onSelect = AttributeOnSelect
 
-onStalled :: (Action a) -> Attribute a
+onStalled :: Action a -> Attribute a
 export onStalled = AttributeOnStalled
 
-onSubmit :: (Action a) -> Attribute a
+onSubmit :: Action a -> Attribute a
 export onSubmit = AttributeOnSubmit
 
-onSuspend :: (Action a) -> Attribute a
+onSuspend :: Action a -> Attribute a
 export onSuspend = AttributeOnSuspend
 
-onTimeUpdate :: (Action a) -> Attribute a
+onTimeUpdate :: Action a -> Attribute a
 export onTimeUpdate = AttributeOnTimeUpdate
 
-onToggle :: (Action a) -> Attribute a
+onToggle :: Action a -> Attribute a
 export onToggle = AttributeOnToggle
 
 onTransitionCancel :: Action a -> Attribute a
@@ -573,13 +562,13 @@ export onTransitionRun = AttributeOnTransitionRun
 onTransitionStart :: Action a -> Attribute a
 export onTransitionStart = AttributeOnTransitionStart
 
-onVolumeChange :: (Action a) -> Attribute a
+onVolumeChange :: Action a -> Attribute a
 export onVolumeChange = AttributeOnVolumeChange
 
-onWaiting :: (Action a) -> Attribute a
+onWaiting :: Action a -> Attribute a
 export onWaiting = AttributeOnWaiting
 
-onWheel :: (Action a) -> Attribute a
+onWheel :: Action a -> Attribute a
 export onWheel = AttributeOnWheel
 
 open :: Boolean -> Attribute a
@@ -644,9 +633,7 @@ spanAttr :: Integer -> Attribute a
 export spanAttr = AttributeSpan
 
 spellcheck :: Boolean -> Attribute a
-export spellcheck = (truthy) => truthy
-  ? AttributeSpellCheck("true")
-  : AttributeSpellCheck("false")
+export spellcheck = (truthy) => truthy ? AttributeSpellCheck("true") : AttributeSpellCheck("false")
 
 src :: String -> Attribute a
 export src = AttributeSrc
@@ -682,9 +669,7 @@ to :: String -> Attribute a
 export to = AttributeTo
 
 translate :: Boolean -> Attribute a
-export translate = (yes) => yes
-  ? AttributeTranslate("yes")
-  : AttributeTranslate("no")
+export translate = (yes) => yes ? AttributeTranslate("yes") : AttributeTranslate("no")
 
 usemap :: String -> Attribute a
 export usemap = AttributeUseMap

@@ -2,17 +2,19 @@ import type { Key } from "@/Key"
 
 import { getKeyFromCode } from "@/Key"
 
+
+
 // https://www.w3schools.com/tags/ref_eventattributes.asp
 
 
 alias BaseEvent = {
   bubbles :: Boolean,
   defaultPrevented :: Boolean,
+  eventType :: String,
   preventDefault :: {} -> {},
   stopImmediatePropagation :: {} -> {},
   stopPropagation :: {} -> {},
   timeStamp :: Integer,
-  eventType :: String,
 }
 
 
@@ -20,23 +22,20 @@ export type Event
   = AbstractEvent(BaseEvent)
   | MouseEvent({ ...BaseEvent, clientX :: Integer, clientY :: Integer })
   | InputEvent({
-      ...BaseEvent,
-      target :: { value :: String, innerText :: String },
-      data :: String,
-      inputType :: String, // Make an InputType type for it
-    })
+    ...BaseEvent,
+    data :: String,
+    // Make an InputType type for it
+    inputType :: String,
+    target :: { innerText :: String, value :: String },
+  })
   | KeyboardEvent({
-      ...BaseEvent,
-      key :: Key,
-      altKey :: Boolean,
-      ctrlKey :: Boolean,
-      shiftKey :: Boolean,
-    })
-  | PopStateEvent({
-      ...BaseEvent,
-      url :: String,
-      path :: String,
-    })
+    ...BaseEvent,
+    altKey :: Boolean,
+    ctrlKey :: Boolean,
+    key :: Key,
+    shiftKey :: Boolean,
+  })
+  | PopStateEvent({ ...BaseEvent, path :: String, url :: String })
 
 
 // https://www.w3schools.com/jsref/obj_keyboardevent.asp
@@ -79,17 +78,19 @@ addDataTransfer = (event, e) => #-{
 }-#
 
 
-export buildMouseEvent = (e) => MouseEvent(addDataTransfer({
-  bubbles: e.bubbles,
-  defaultPrevented: e.defaultPrevented,
-  preventDefault: e.preventDefault,
-  stopImmediatePropagation: e.stopImmediatePropagation,
-  stopPropagation: e.stopPropagation,
-  timeStamp: e.timeStamp,
-  eventType: e.eventType,
-  clientX: e.clientX,
-  clientY: e.clientY,
-})(e))
+export buildMouseEvent = (e) => MouseEvent(
+  addDataTransfer({
+    bubbles: e.bubbles,
+    defaultPrevented: e.defaultPrevented,
+    preventDefault: e.preventDefault,
+    stopImmediatePropagation: e.stopImmediatePropagation,
+    stopPropagation: e.stopPropagation,
+    timeStamp: e.timeStamp,
+    eventType: e.eventType,
+    clientX: e.clientX,
+    clientY: e.clientY,
+  })(e),
+)
 
 
 export buildAbstractEvent = (e) => AbstractEvent({

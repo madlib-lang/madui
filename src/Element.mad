@@ -4,18 +4,19 @@ import { h as madui_h } from "snabbdom"
 
 import type { Attribute } from "@/Attribute"
 
+import { fromList } from "Dictionary"
 import { reduce } from "List"
+
 import { wrapEventHandler } from "@/CoreUtils"
 import { EventConstructors } from "@/Event"
 
-import { fromList } from "Dictionary"
 
 
 export type Element a = Element
 
 alias RouteInfo = {
-  urlParams :: Dictionary String String,
   searchParams :: Dictionary String String,
+  urlParams :: Dictionary String String,
 }
 
 
@@ -74,7 +75,12 @@ export _tag = (objectifyAttrs, tagName, attrs, children) => #- {
 } -#
 
 tag :: String -> List (Attribute a) -> List (Element a) -> Element a
-export tag = (tagName, attrs, children) => _tag(_objectifyAttrs(reduce, wrapEventHandler, EventConstructors), tagName, attrs, children)
+export tag = (tagName, attrs, children) => _tag(
+  _objectifyAttrs(reduce, wrapEventHandler, EventConstructors),
+  tagName,
+  attrs,
+  children,
+)
 
 
 
@@ -327,25 +333,24 @@ export forRoute = (route, enhancedView) => {
   -#
 
   match = #- _match -#
-  return match ? enhancedView(#- routeInfo -#) : <empty />
+  return match ? enhancedView(#- routeInfo -#) : <empty  />
 }
 
 
-switchRoute :: List #[String, (RouteInfo -> Element b)] -> Element b
+switchRoute :: List #[String, RouteInfo -> Element b] -> Element b
 export switchRoute = (matchers) => where(matchers) {
-  [#[route, enhancedView], ...nextMatchers] => do {
-    matchRoute = _matchRoute(fromList)
-    #-
+  [#[route, enhancedView], ...nextMatchers] =>
+    do {
+      matchRoute = _matchRoute(fromList)
+      #-
     const routeInfo = matchRoute(route)
     const _match = routeInfo !== null
     -#
 
-    match = #- _match -#
-    return match
-      ? enhancedView(#- routeInfo -#)
-      : switchRoute(nextMatchers)
-  }
+      match = #- _match -#
+      return match ? enhancedView(#- routeInfo -#) : switchRoute(nextMatchers)
+    }
 
   [] =>
-    <empty />
+    <empty  />
 }

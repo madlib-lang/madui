@@ -8,14 +8,14 @@ on:
         required: true
 
 env:
-  node-version: 14.x
+  node-version: 20.x
 
 
 jobs:
   check-version:
       runs-on: ubuntu-latest
       steps:
-        - uses: actions/checkout@v2
+        - uses: actions/checkout@v4
         - run: |
             MADLIB_PKG_VERSION="v$(cat madlib.json | grep version | cut -d":" -f2 | cut -d"\"" -f2)"
             TAG_NAME=${{ github.event.inputs.version }}
@@ -30,16 +30,16 @@ jobs:
     needs: check-version
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Use Node.js ${{ env.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.node-version }}
 
       - name: "Changelog: generate changelog"
         id: changelog
-        uses: TriPSs/conventional-changelog-action@v3.4.1
+        uses: TriPSs/conventional-changelog-action@v5.2.1
         with:
           presets: "conventionalcommits"
           github-token: ${{ secrets.GITHUB_TOKEN }}

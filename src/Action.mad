@@ -1,8 +1,8 @@
 import type { Wish } from "Wish"
 
-import {} from "Wish"
-
 import type { Event } from "@/Event"
+
+import {} from "Wish"
 
 
 
@@ -11,9 +11,7 @@ export alias Action a = a -> Event -> List (Wish (a -> a) (a -> a))
 export type GlobalAction a = GlobalAction(String, Action a)
 
 syncAction :: (a -> Event -> a) -> Action a
-export syncAction = (stateUpdate) => (
-  (_, event) => [of((state) => stateUpdate(state, event))]
-)
+export syncAction = (stateUpdate) => ((_, event) => [of((state) => stateUpdate(state, event))])
 
 throttleAction :: Integer -> Action a -> Action a
 export throttleAction = (amount, action) => {

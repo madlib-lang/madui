@@ -1,12 +1,14 @@
+import type { Config } from "@/Config"
+import type { Element } from "@/Element"
+
 import { get } from "Dictionary"
 import {} from "Number"
 
-import type { Config } from "@/Config"
-import type { Element } from "@/Element"
 import { DEFAULT_CONFIG } from "@/Config"
-
 import { runAction, wrapEventHandler } from "@/CoreUtils"
 import { EventConstructors } from "@/Event"
+
+
 
 #-
 import {
@@ -112,5 +114,5 @@ export renderWithConfig = _renderWithConfig(runAction)
 /**
  * render - boostraps the app and takes a component, and an initial state as parameters
  */
- render :: (a -> Element a) -> a -> String -> {}
- export render = renderWithConfig(DEFAULT_CONFIG)
+render :: (a -> Element a) -> a -> String -> {}
+export render = renderWithConfig(DEFAULT_CONFIG)
