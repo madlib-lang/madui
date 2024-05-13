@@ -1,7 +1,7 @@
 {
   "name": "MadUI",
-  "version": "7.0.1",
-  "madlibVersion": "0.19.2",
+  "version": "7.0.2",
+  "madlibVersion": "0.23.14",
   "main": "src/Main.mad",
   "importAliases": {
     ".": "src"
