@@ -1,0 +1,49 @@
+import Fn from "Function"
+import IO from "IO"
+import List from "List"
+import { Just, Nothing } from "Maybe"
+import { assertEquals, test } from "Test"
+import Wish from "Wish"
+
+import { syncAction } from "./Action"
+import { AbstractEvent } from "./Event"
+
+
+
+test(
+  "syncAction",
+  () => do {
+    stateUpdate = (x, _) => x
+    updater = syncAction(stateUpdate)
+    myAbstractEvent = AbstractEvent({
+      bubbles: true,
+      defaultPrevented: true,
+      eventType: "nice",
+      preventDefault: () => {},
+      stopImmediatePropagation: () => {},
+      stopPropagation: () => {},
+      timeStamp: 1,
+    })
+    executed = updater({ state: "test" }, myAbstractEvent)
+    out = Nothing
+    set = (x) => {
+      out := Just(x)
+    }
+    pipe(
+      List.first,
+      map(
+        Wish.fulfill(
+          pipe(
+            (raw) => raw({ state: "bad" }),
+            set,
+          ),
+          pipe(
+            (raw) => raw({ state: "good" }),
+            set,
+          ),
+        ),
+      ),
+    )(executed)
+    return assertEquals(out, Just({ state: "good" }))
+  },
+)
