@@ -1,0 +1,17 @@
+import { assertEquals, test } from "Test"
+
+import { buildKeyboardEvent } from "./Event"
+import { KEY_COLON } from "./Key"
+
+
+
+
+/*
+test(
+  "buildKeyboardEvent",
+  () => do {
+    myEvent = {}
+    return assertEquals(buildKeyboardEvent(myEvent), {})
+  },
+)
+*/

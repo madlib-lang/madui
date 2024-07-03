@@ -10,7 +10,7 @@ export alias Action a = a -> Event -> List (Wish (a -> a) (a -> a))
 
 
 syncAction :: (a -> Event -> a) -> Action a
-export syncAction = (stateUpdate) => ((_, event) => [of((state) => stateUpdate(state, event))])
+export syncAction = (stateUpdate) => ((_, event) => [of(stateUpdate($, event))])
 
 throttleAction :: Integer -> Action a -> Action a
 export throttleAction = (amount, action) => {
