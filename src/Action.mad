@@ -8,10 +8,9 @@ import {} from "Wish"
 
 export alias Action a = a -> Event -> List (Wish (a -> a) (a -> a))
 
-export type GlobalAction a = GlobalAction(String, Action a)
 
 syncAction :: (a -> Event -> a) -> Action a
-export syncAction = (stateUpdate) => ((_, event) => [of((state) => stateUpdate(state, event))])
+export syncAction = (stateUpdate) => ((_, event) => [of(stateUpdate($, event))])
 
 throttleAction :: Integer -> Action a -> Action a
 export throttleAction = (amount, action) => {
@@ -27,41 +26,18 @@ export throttleAction = (amount, action) => {
   }-#
 }
 
-onAfterPrint :: Action a -> GlobalAction a
+export type GlobalAction a = GlobalAction(String, Action a)
+
 export onAfterPrint = GlobalAction("afterprint")
-
-onBeforePrint :: Action a -> GlobalAction a
 export onBeforePrint = GlobalAction("beforeprint")
-
-onBeforeUnload :: Action a -> GlobalAction a
 export onBeforeUnload = GlobalAction("beforeunload")
-
-onDocumentLoad :: Action a -> GlobalAction a
 export onDocumentLoad = GlobalAction("load")
-
-onPageHide :: Action a -> GlobalAction a
 export onPageHide = GlobalAction("pagehide")
-
-onPageShow :: Action a -> GlobalAction a
 export onPageShow = GlobalAction("pageshow")
-
-onOffline :: Action a -> GlobalAction a
 export onOffline = GlobalAction("offline")
-
-onOnline :: Action a -> GlobalAction a
 export onOnline = GlobalAction("online")
-
-onResize :: Action a -> GlobalAction a
 export onResize = GlobalAction("resize")
-
-onBodyScroll :: Action a -> GlobalAction a
 export onBodyScroll = GlobalAction("scroll")
-
-onStorage :: Action a -> GlobalAction a
 export onStorage = GlobalAction("storage")
-
-onUnload :: Action a -> GlobalAction a
 export onUnload = GlobalAction("unload")
-
-onUrlChanged :: Action a -> GlobalAction a
 export onUrlChanged = GlobalAction("popstate")

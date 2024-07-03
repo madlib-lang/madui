@@ -1,0 +1,89 @@
+import List from "List"
+import { Just, Nothing } from "Maybe"
+import { assertEquals, test } from "Test"
+import Wish from "Wish"
+
+import {
+  GlobalAction,
+  onAfterPrint,
+  onBeforePrint,
+  onBeforeUnload,
+  onBodyScroll,
+  onDocumentLoad,
+  onOffline,
+  onOnline,
+  onPageHide,
+  onPageShow,
+  onResize,
+  onStorage,
+  onUnload,
+  onUrlChanged,
+  syncAction,
+  throttleAction,
+} from "./Action"
+import { AbstractEvent } from "./Event"
+
+
+
+myAbstractEvent = AbstractEvent({
+  bubbles: true,
+  defaultPrevented: true,
+  eventType: "nice",
+  preventDefault: () => {},
+  stopImmediatePropagation: () => {},
+  stopPropagation: () => {},
+  timeStamp: 1,
+})
+
+test(
+  "syncAction",
+  () => do {
+    stateUpdate = (x, _) => x
+    updater = syncAction(stateUpdate)
+
+    executed = updater({ state: "test" }, myAbstractEvent)
+    out = Nothing
+    stateApplicator = (x) => pipe(
+      (fn) => fn(x),
+      (v) => {
+        out := Just(v)
+      },
+    )
+    pipe(
+      List.first,
+      map(Wish.fulfill(stateApplicator({ state: "bad" }), stateApplicator({ state: "good" }))),
+    )(executed)
+    return assertEquals(out, Just({ state: "good" }))
+  },
+)
+
+// this improves coverage but throttleAction is in the fence
+test(
+  "throttleAction",
+  () => do {
+    myAction = (_, _) => []
+    throttled = throttleAction(10, myAction)
+    out = throttled({ state: "test" }, myAbstractEvent)
+    return assertEquals(out, [])
+  },
+)
+
+test(
+  "Named GlobalActions",
+  () => do {
+    myAction = (_, _) => []
+    _ <- assertEquals(onAfterPrint(myAction), GlobalAction("afterprint", myAction))
+    _ <- assertEquals(onBeforePrint(myAction), GlobalAction("beforeprint", myAction))
+    _ <- assertEquals(onBeforeUnload(myAction), GlobalAction("beforeunload", myAction))
+    _ <- assertEquals(onDocumentLoad(myAction), GlobalAction("load", myAction))
+    _ <- assertEquals(onPageHide(myAction), GlobalAction("pagehide", myAction))
+    _ <- assertEquals(onPageShow(myAction), GlobalAction("pageshow", myAction))
+    _ <- assertEquals(onOffline(myAction), GlobalAction("offline", myAction))
+    _ <- assertEquals(onOnline(myAction), GlobalAction("online", myAction))
+    _ <- assertEquals(onResize(myAction), GlobalAction("resize", myAction))
+    _ <- assertEquals(onBodyScroll(myAction), GlobalAction("scroll", myAction))
+    _ <- assertEquals(onStorage(myAction), GlobalAction("storage", myAction))
+    _ <- assertEquals(onUnload(myAction), GlobalAction("unload", myAction))
+    return assertEquals(onUrlChanged(myAction), GlobalAction("popstate", myAction))
+  },
+)

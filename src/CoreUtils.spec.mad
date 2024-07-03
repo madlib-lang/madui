@@ -1,0 +1,24 @@
+import Fn from "Function"
+import { assertEquals, test } from "Test"
+
+import { runAction } from "./CoreUtils"
+
+
+
+
+/*
+test(
+  "runAction",
+  () => {
+    #- global.window = {} -#
+    env = {
+      rootView: Fn.identity,
+      patch: (a, b) => a,
+      currentElement: #- {} -#,
+      currentState: #- {} -#,
+    }
+    runAction(env, Fn.identity)
+    return assertEquals(env, #- {} -#)
+  },
+)
+*/

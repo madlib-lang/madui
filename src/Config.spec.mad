@@ -1,0 +1,40 @@
+import type { Config, RoutingKind } from "./Config"
+
+import { assertEquals, test } from "Test"
+
+import { GlobalAction } from "./Action"
+import {
+  BasicRouting,
+  DEFAULT_CONFIG,
+  HashRouting,
+  addGlobalEventHandler,
+  addSubscription,
+} from "./Config"
+
+
+
+test(
+  "addGlobalEventHandler",
+  () => do {
+    action = (_, _) => []
+    globoAction = GlobalAction("dostuff", action)
+    return assertEquals(
+      addGlobalEventHandler(globoAction, DEFAULT_CONFIG),
+      { globalEventHandlers: [globoAction], routingKind: BasicRouting, subscriptions: [] },
+    )
+  },
+)
+
+test(
+  "addSubscription",
+  () => do {
+    sub = (_) => {}
+    return assertEquals(
+      addSubscription(
+        sub,
+        { subscriptions: [], globalEventHandlers: [], routingKind: HashRouting },
+      ),
+      { globalEventHandlers: [], routingKind: HashRouting, subscriptions: [sub] },
+    )
+  },
+)

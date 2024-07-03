@@ -1,0 +1,38 @@
+import Fn from "Function"
+import IO from "IO"
+import Wish from "Wish"
+
+import { syncAction } from "./Action"
+import { AbstractEvent } from "./Event"
+
+
+
+main = () => {
+  stateUpdate = (x, _) => x
+  updater = syncAction(stateUpdate)
+  myAbstractEvent = AbstractEvent({
+    bubbles: true,
+    defaultPrevented: true,
+    eventType: "nice",
+    preventDefault: () => {},
+    stopImmediatePropagation: () => {},
+    stopPropagation: () => {},
+    timeStamp: 1,
+  })
+  // return assertEquals(
+  raw = chain(updater({ state: "test" }))([myAbstractEvent])
+  pipe(
+    Wish.fulfill(
+      pipe(
+        IO.trace("bad"),
+        Fn.noop,
+      ),
+      pipe(
+        IO.trace("good"),
+        Fn.noop,
+      ),
+    ),
+  )(raw)
+  // [Wish.good((s) => stateUpdate(s, myAbstractEvent))],
+  // )
+}
